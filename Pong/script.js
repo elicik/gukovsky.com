@@ -1,13 +1,50 @@
 // EVENT LISTENERS
-var keys = [];
+var keys = {
+	w: false,
+	s: false,
+	up: false,
+	down: false
+};
 window.addEventListener("keydown", function(e) {
-	keys[e.keyCode] = true;
-	e.preventDefault();
+	switch (e.keyCode) {
+		case 87:
+			keys.w = true;
+			e.preventDefault();
+			break;
+		case 83:
+			keys.s = true;
+			e.preventDefault();
+			break;
+		case 38:
+			keys.up = true;
+			e.preventDefault();
+			break;
+		case 40:
+			keys.down = true;
+			e.preventDefault();
+			break;
+	}
 });
 
 window.addEventListener("keyup", function(e) {
-	keys[e.keyCode] = false;
-	e.preventDefault();
+	switch (e.keyCode) {
+		case 87:
+			keys.w = false;
+			e.preventDefault();
+			break;
+		case 83:
+			keys.s = false;
+			e.preventDefault();
+			break;
+		case 38:
+			keys.up = false;
+			e.preventDefault();
+			break;
+		case 40:
+			keys.down = false;
+			e.preventDefault();
+			break;
+	}
 });
 
 // INTERSECTIONS
@@ -143,12 +180,12 @@ function waitForBall(winner) {
 	centerBall();
 	hits = 0;
 	wait = true;
-	if (winner === 1 && (keys[87] || keys[83])) {
+	if (winner === 1 && (keys.w || keys.s)) {
 		ballVelocityX *= -1;
 		wait = false;
 		directionText.text = "";
 	}
-	else if (winner === 2 && (keys[38] || keys[40])) {
+	else if (winner === 2 && (keys.up || keys.down)) {
 		wait = false;
 		directionText.text = "";
 	}
@@ -161,16 +198,16 @@ function waitForBall(winner) {
 var renderer = PIXI.autoDetectRenderer(width, height, {autoResize: true, transparent: true});
 function render() {
 	// Move paddles
-	if (keys[87] && paddle1.position.y > border()) { // W
+	if (keys.w && paddle1.position.y > border()) {
 		paddle1.position.y -= paddleSpeed();
 	}
-	if (keys[83] && paddle1.position.y < height - border() - paddleHeight()) { // S
+	if (keys.s && paddle1.position.y < height - border() - paddleHeight()) {
 		paddle1.position.y += paddleSpeed();
 	}
-	if (keys[38] && paddle2.position.y > border()) { // Up
+	if (keys.up && paddle2.position.y > border()) {
 		paddle2.position.y -= paddleSpeed();
 	}
-	if (keys[40] && paddle2.position.y < height - border() - paddleHeight()) { // Down
+	if (keys.down && paddle2.position.y < height - border() - paddleHeight()) {
 		paddle2.position.y += paddleSpeed();
 	}
 	snapPaddles();
