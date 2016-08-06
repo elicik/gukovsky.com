@@ -1,18 +1,15 @@
 {
-  "name": "Website",
-  "homepage": "https://github.com/elicik/Website",
-  "description": "",
-  "main": "index.html",
-  "license": "MIT",
-  "private": true,
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
-  "dependencies": {
-    "normalize-css": "^4.2.0"
-  }
+	"name": "website",
+	"private": true,
+	"ignore": [
+		"**/.*",
+		"node_modules",
+		"bower_components",
+		"test",
+		"tests"
+	],
+	"dependencies": {
+		"normalize-css": "latest",
+		"threejs": "latest"
+	}
 }
