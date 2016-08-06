@@ -3,7 +3,9 @@ var keys = {
 	w: false,
 	s: false,
 	up: false,
-	down: false
+	down: false,
+	paddle1: false,
+	paddle2: false
 };
 window.addEventListener("keydown", function(e) {
 	switch (e.keyCode) {
@@ -123,15 +125,27 @@ paddle2
 	.on('touchmove', onDragMove);
 
 function onDragStart(event) {
+	if (this === paddle1) {
+		keys.paddle1 = true;
+	}
+	else if (this === paddle2) {
+		keys.paddle2 = true;
+	}
 	this.data = event.data;
 	this.dragging = true;
 	this.sy = this.data.getLocalPosition(this).y;
 }
-function onDragEnd() {
+function onDragEnd(event) {
+	if (this === paddle1) {
+		keys.paddle1 = false;
+	}
+	else if (this === paddle2) {
+		keys.paddle2 = false;
+	}
 	this.dragging = false;
 	this.data = null;
 }
-function onDragMove() {
+function onDragMove(event) {
 	if(this.dragging) {
 		var newPosition = this.data.getLocalPosition(this.parent);
 		if (newPosition.y - this.sy > border() && newPosition.y - this.sy < height - border() - paddleHeight()) {
@@ -180,12 +194,12 @@ function waitForBall(winner) {
 	centerBall();
 	hits = 0;
 	wait = true;
-	if (winner === 1 && (keys.w || keys.s)) {
+	if (winner === 1 && (keys.w || keys.s || keys.paddle1)) {
 		ballVelocityX *= -1;
 		wait = false;
 		directionText.text = "";
 	}
-	else if (winner === 2 && (keys.up || keys.down)) {
+	else if (winner === 2 && (keys.up || keys.down || keys.paddle2)) {
 		wait = false;
 		directionText.text = "";
 	}
