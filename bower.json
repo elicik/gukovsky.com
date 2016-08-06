@@ -10,6 +10,7 @@
 	],
 	"dependencies": {
 		"normalize-css": "latest",
-		"threejs": "latest"
+		"threejs": "latest",
+		"pixi.js": "latest"
 	}
 }
