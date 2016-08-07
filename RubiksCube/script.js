@@ -1,3 +1,5 @@
+"use strict";
+
 // SCENE
 var scene = new THREE.Scene();
 

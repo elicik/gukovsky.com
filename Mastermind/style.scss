@@ -54,21 +54,69 @@ $yellow: #F1C40F;
 $green: #2ECC71;
 $blue: #3498DB;
 $purple: #9B59B6;
-#mastermind-mode {
+
+$right: #F08080;
+$wrong: #999999;
+
+$color-size: 48;
+
+#mastermind {
 	text-align: center;
 }
 .color-selector {
-	select, option {
-		-webkit-appearance: none;
-		   -moz-appearance: none;
-		        appearance: none;
-		height: 48px;
-		width: 48px;
-		[data-color="red"] {background: $red;}
-		[data-color="orange"] {background: $orange;}
-		[data-color="yellow"] {background: $yellow;}
-		[data-color="green"] {background: $green;}
-		[data-color="blue"] {background: $blue;}
-		[data-color="purple"] {background: $purple;}
+	margin: 8px 4px;
+	display: inline-block;
+	width: #{$color-size}px;
+	height: #{$color-size}px;
+	.preview {
+		height: #{$color-size}px;
+		width: #{$color-size}px;
+		box-sizing: border-box;
+		&:hover {
+			border: 2px solid black;
+		}
 	}
+	.dropdown {
+		display: block;
+
+		div {
+			float: left;
+			box-sizing: border-box;
+			height: #{$color-size / 2}px;
+			width: #{$color-size / 3}px;
+			&:hover {
+				border: 2px solid black;
+			}
+		}
+	}
+}
+div {
+	&[data-color="red"] {background: $red;}
+	&[data-color="orange"] {background: $orange;}
+	&[data-color="yellow"] {background: $yellow;}
+	&[data-color="green"] {background: $green;}
+	&[data-color="blue"] {background: $blue;}
+	&[data-color="purple"] {background: $purple;}
+}
+
+#guess-mode {
+	display: none;
+}
+#mode {
+	padding: 24px;
+}
+
+
+.square {
+	width: #{$color-size}px;
+	height: #{$color-size}px;
+	display: inline-block;
+}
+.minisquare {
+	float: left;
+	width: #{$color-size / 3}px;
+	height: #{$color-size / 3}px;
+	margin: #{$color-size / 12}px;
+	&.right {background-color: #F08080;}
+	&.wrong {background-color: #999999;}
 }

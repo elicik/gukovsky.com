@@ -1,3 +1,5 @@
+"use strict";
+
 // EVENT LISTENERS
 var keys = {
 	w: false,
