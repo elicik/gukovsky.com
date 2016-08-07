@@ -297,4 +297,4 @@ function resize() {
 	score2text.position.x = width*3/4 - score2text.width/2;
 	directionText.position.x = width/2 - directionText.width/2;
 }
-window.onresize = resize;
+window.addEventListener("resize", resize);
