@@ -70,7 +70,8 @@ var height = 90;
 
 // PADDLES
 var border = function() {
-	return Math.round(width / 80);
+	// return Math.round(width / 80);
+	return 0;
 }
 var paddleWidth = function() {
 	return Math.round(width / 80);
@@ -211,7 +212,7 @@ function waitForBall(winner) {
 }
 
 // RENDER
-var renderer = PIXI.autoDetectRenderer(width, height, {autoResize: true, transparent: true});
+var renderer = PIXI.autoDetectRenderer(width, height, {transparent: true});
 function render() {
 	// Move paddles
 	if (keys.w && paddle1.position.y > border()) {
@@ -268,11 +269,11 @@ function render() {
 }
 
 waitForBall(2);
-resize();
 
-// renderOptions.resolution = Math.floor(document.querySelector("#pong").offsetWidth / width);
 document.addEventListener("DOMContentLoaded", function(event) {
 	document.body.insertBefore(renderer.view, document.body.firstChild);
+	window.addEventListener("resize", resize);
+	resize();
 	render();
 });
 
@@ -280,6 +281,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
 function resize() {
 	width = window.innerWidth;
 	height = window.innerHeight;
+
+	var bodyComputedStyle = window.getComputedStyle(document.body, null);
+	width -= parseInt(bodyComputedStyle.getPropertyValue("padding-left"), 10);
+	width -= parseInt(bodyComputedStyle.getPropertyValue("padding-right"), 10);
+	height -= parseInt(bodyComputedStyle.getPropertyValue("padding-top"), 10);
+	height -= parseInt(bodyComputedStyle.getPropertyValue("padding-bottom"), 10);
+
 	renderer.resize(width, height);
 
 	paddle1.height = paddleHeight();
@@ -299,4 +307,3 @@ function resize() {
 	score2text.position.x = width*3/4 - score2text.width/2;
 	directionText.position.x = width/2 - directionText.width/2;
 }
-window.addEventListener("resize", resize);
