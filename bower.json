@@ -12,6 +12,7 @@
 		"normalize-css": "latest",
 		"threejs": "latest",
 		"pixi.js": "latest",
-		"jquery": "latest"
+		"jquery": "latest",
+		"sweetalert": "latest"
 	}
 }

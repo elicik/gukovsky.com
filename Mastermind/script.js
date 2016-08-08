@@ -4,7 +4,14 @@ var key = [];
 var guesses = 0;
 
 function win() {
-	alert("You won! It took " + guesses + " guesses");
+	swal({
+		title: "You won! It took " + guesses + " guesses",
+		type: "success",
+		allowEscapeKey: false,
+		closeOnConfirm: false
+	}, function() {
+		selectGameType();
+	});
 }
 
 function setKeyMode() {
@@ -68,21 +75,34 @@ function checkMastermind(guess) {
 function submitKey(event) {
 	var blocks = document.querySelectorAll("#key > .color-selector > .preview");
 	for (var i = 0; i < 4; i++) {
-		key[i] = blocks[i].dataset.color;
+		if (blocks[i].dataset.color) {
+			key[i] = blocks[i].dataset.color;
+		}
+		else {
+			swal("Error", "Make sure every color in the key is set", "error");
+			return;
+		}
 	}
 	setGuessMode();
 }
 
 function submitGuess() {
-	guesses++;
-	document.querySelector("#history-header").innerHTML = "History";
 
 	var guess = [];
 	var blocks = document.querySelectorAll("#guess > .color-selector > .preview");
 	for (var i = 0; i < 4; i++) {
-		guess[i] = blocks[i].dataset.color;
+		if (blocks[i].dataset.color) {
+			guess[i] = blocks[i].dataset.color;
+		}
+		else {
+			swal("Error", "Make sure every color in your guess is set", "error");
+			return;
+		}
 	}
 
+	guesses++;
+	document.querySelector("#history-header").innerHTML = "History";
+	
 	var result = checkMastermind(guess);
 
 	var appendedString = '';
@@ -97,7 +117,6 @@ function submitGuess() {
 		appendedString += '<div class="minisquare wrong"></div>';
 	}
 	appendedString += '</div>';
-	console.log(appendedString);
 	var div = document.createElement('div');
 	div.innerHTML = appendedString;
 	document.querySelector("#history").insertBefore(div, document.querySelector("#history").firstChild);
@@ -109,9 +128,12 @@ function submitGuess() {
 }
 
 function colorSelectorPreviewClick(event) {
+	// Remove color
+	var preview = event.target;
+	delete preview.dataset.color;
 	// Toggle dropdown
 	var dropdown = event.target.parentElement.children[0];
-	dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+	dropdown.style.display = "block";
 }
 
 function colorSelectorOptionClick(event) {
@@ -123,6 +145,35 @@ function colorSelectorOptionClick(event) {
 	dropdown.style.display = "none";	
 }
 
+function selectGameType() {
+	swal({
+		title: "Choose a game type",
+		text: "You can either play against a computer, or against a friend",
+		showCancelButton: true,
+		confirmButtonText: "Play against a friend",
+		cancelButtonText: "Play against a computer",
+		allowEscapeKey: false,
+		closeOnConfirm: false,
+		closeOnCancel: true,
+	}, function(isConfirm) {
+		if (isConfirm) {
+			swal({
+				title: "Get ready!",
+				text: "Don't let the other person look before you've submitted your key!",
+				allowEscapeKey: false,
+			}, setKeyMode);
+		}
+		else {
+			// Computer opponent
+			var colors = ["red", "orange", "yellow", "green", "blue", "purple"];
+			for (var i = 0; i < 4; i++) {
+				key[i] = colors[Math.floor(Math.random() * colors.length)];
+			}
+			setGuessMode();
+		}
+	});
+}
+
 document.addEventListener("DOMContentLoaded", function() {
 	for (var colorSelectorPreview of document.querySelectorAll(".color-selector > .preview")) {
 		colorSelectorPreview.addEventListener("click", colorSelectorPreviewClick);
@@ -132,4 +183,5 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 	document.querySelector('button[name="submitKey"]').addEventListener("click", submitKey);
 	document.querySelector('button[name="submitGuess"]').addEventListener("click", submitGuess);
+	selectGameType();
 });

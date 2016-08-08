@@ -125,11 +125,25 @@ $(document).ready(function() {
 				$("#TTT-winner").html((turn ? "Red" : "Blue") + " won! Congrats!");
 				$("#TTT-turnText").css("display", "none");
 				$("#TTT-button").css("display", "inline-block");
+				swal({
+					title: "Game over!",
+					text: (turn ? "Red" : "Blue") + " won! Congrats!",
+					type: "success",
+					confirmButtonClass: "btn-success",
+					confirmButtonText: "OK"
+				});
 			}
 			else if(tie()) { // Game tied
 				$("#TTT-winner").html("The match ended with a tie!");
 				$("#TTT-turnText").css("display", "none");
 				$("#TTT-button").css("display", "inline-block");
+				swal({
+					title: "Game over!",
+					text: "There was a tie!",
+					type: "info",
+					confirmButtonClass: "btn-success",
+					confirmButtonText: "OK"
+				});
 			}
 			else { // If square is available, make it possible. If not, make everything possible
 				if($.isArray(grid[i][j])) {
