@@ -1,2 +1,2 @@
-#minesweeper{border-collapse:collapse}#minesweeper td{border:1px solid black;box-sizing:content-box;text-align:center;height:16px;width:16px}
+#minesweeper{border-collapse:collapse}#minesweeper td{border:1px solid black;box-sizing:content-box;text-align:center;height:16px;width:16px}#minesweeper td[data-activated="true"]{background:grey}#minesweeper td[data-flagged="true"]{background:lightcoral}
 /*# sourceMappingURL=style.css.map */
