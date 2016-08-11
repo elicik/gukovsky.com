@@ -10,6 +10,7 @@ var clock = 0;
 var bombsFlagged = 0;
 var clockIntervalID;
 
+// SETUP
 var grid = [];
 var firstClick = true;
 
@@ -19,8 +20,21 @@ var Cell = function() {
 	this.activated = false;
 	this.flagged = false;
 	this.hint = false;
+	this.deathBomb = false;
 }
 
+// GAME BASICS
+function generateGrid() {
+	for (var x = 0; x < width; x++) {
+		grid[x] = [];
+		for (var y = 0; y < height; y++) {
+			grid[x][y] = new Cell();
+		}
+	}
+	for (var i = 0; i < bombs; i++) {
+		placeBomb();
+	}
+}
 function calculateSurroundings() {
 	for (var x = 0; x < width; x++) {
 		for (var y = 0; y < height; y++) {
@@ -51,79 +65,6 @@ function placeBomb() {
 		}
 	}
 }
-function generateGrid() {
-	for (var x = 0; x < width; x++) {
-		grid[x] = [];
-		for (var y = 0; y < height; y++) {
-			grid[x][y] = new Cell();
-		}
-	}
-	for (var i = 0; i < bombs; i++) {
-		placeBomb();
-	}
-}
-
-function generateHTML() {
-	var table = document.querySelector("#minesweeper");
-	for (var y = 0; y < height; y++) {
-		var tr = document.createElement("tr");
-		for (var x = 0; x < width; x++) {
-			var td = document.createElement("td");
-			td.dataset.x = x;
-			td.dataset.y = y;
-			td.addEventListener("click", cellLeftClick);
-			td.addEventListener("contextmenu", cellRightClick);
-			tr.appendChild(td);
-		}
-		table.appendChild(tr);
-	}
-	updateAllHTML();
-	updateBombsFlagged();
-}
-
-function updateHTML(x, y) {
-	var td = document.querySelector('#minesweeper td[data-x="'+x+'"][data-y="'+y+'"]');
-	var cell = grid[x][y];
-	td.dataset.bomb = cell.bomb;
-	td.dataset.surrounding = cell.surrounding;
-	td.dataset.activated = cell.activated;
-	td.dataset.flagged = cell.flagged;
-	td.dataset.hint = cell.hint;
-
-	if (cell.activated && cell.surrounding >= 1 && !cell.bomb && !cell.flagged) {
-		td.innerHTML = cell.surrounding;
-	}
-	else {
-		td.innerHTML = "";
-	}
-}
-
-function updateAllHTML() {
-	for (var x = 0; x < width; x++) {
-		for (var y = 0; y < height; y++) {
-			updateHTML(x, y);
-		}
-	}
-}
-
-function updateClock() {
-	clock++;
-	if (clock > 999) {
-		clearInterval(clockIntervalID);
-	}
-	document.querySelector("#clock").innerHTML = ("00" + clock).slice(-3);
-}
-
-function updateBombsFlagged() {
-	var numBombs = bombs - bombsFlagged;
-	var numBombsString = ("00" + Math.abs(numBombs)).slice(-3);
-	if (numBombs < 0) {
-		numBombsString = "-" + numBombsString.slice(1);
-	}
-
-	document.querySelector("#numBombs").innerHTML = numBombsString;
-}
-
 function reveal(x, y) {
 	var cell = grid[x][y];
 	if (!cell.activated && !cell.flagged && !cell.hint) {
@@ -149,9 +90,8 @@ function revealSurroundings(x, y) {
 		}
 	}
 }
-
-// Assumes loss
 function revealAllBombs() {
+	// Assumes loss
 	for (var x = 0; x < width; x++) {
 		for (var y = 0; y < height; y++) {
 			var cell = grid[x][y];
@@ -162,13 +102,12 @@ function revealAllBombs() {
 		}
 	}
 }
-
-// Assumes win
 function flagAllBombs() {
+	// Assumes win
 	for (var x = 0; x < width; x++) {
 		for (var y = 0; y < height; y++) {
 			var cell = grid[x][y];
-			if (cell.bomb) {
+			if (cell.bomb && !cell.flagged) {
 				cell.flagged = true;
 				bombsFlagged++;
 				updateHTML(x, y);
@@ -178,15 +117,13 @@ function flagAllBombs() {
 	updateBombsFlagged();
 }
 
-function deathBomb(x, y) {
-	var td = document.querySelector('#minesweeper td[data-x="'+x+'"][data-y="'+y+'"]');
-	td.dataset.deathBomb = true;
-}
-
+// WINNING AND LOSING
 function gameOver(x, y) {
 	playing = false;
 	clearInterval(clockIntervalID);
-	deathBomb(x, y);
+	var cell = grid[x][y];
+	cell.deathBomb = true;
+	updateHTML(x, y);
 	revealAllBombs();
 	alert("YOU LOSE");
 }
@@ -196,7 +133,6 @@ function win() {
 	flagAllBombs();
 	alert("YOU WIN");
 }
-
 function checkWin() {
 	for (var x = 0; x < width; x++) {
 		for (var y = 0; y < height; y++) {
@@ -209,6 +145,67 @@ function checkWin() {
 	return true;
 }
 
+// HTML
+function generateHTML() {
+	var table = document.querySelector("#minesweeper");
+	table.innerHTML = "";
+	for (var y = 0; y < height; y++) {
+		var tr = document.createElement("tr");
+		for (var x = 0; x < width; x++) {
+			var td = document.createElement("td");
+			td.dataset.x = x;
+			td.dataset.y = y;
+			td.addEventListener("click", cellLeftClick);
+			td.addEventListener("contextmenu", cellRightClick);
+			tr.appendChild(td);
+		}
+		table.appendChild(tr);
+	}
+	updateAllHTML();
+	updateBombsFlagged();
+}
+function updateHTML(x, y) {
+	var td = document.querySelector('#minesweeper td[data-x="'+x+'"][data-y="'+y+'"]');
+	var cell = grid[x][y];
+	td.dataset.bomb = cell.bomb;
+	td.dataset.surrounding = cell.surrounding;
+	td.dataset.activated = cell.activated;
+	td.dataset.flagged = cell.flagged;
+	td.dataset.hint = cell.hint;
+	td.dataset.deathBomb = cell.deathBomb;
+
+	if (cell.activated && cell.surrounding >= 1 && !cell.bomb && !cell.flagged) {
+		td.innerHTML = cell.surrounding;
+	}
+	else {
+		td.innerHTML = "";
+	}
+}
+function updateAllHTML() {
+	for (var x = 0; x < width; x++) {
+		for (var y = 0; y < height; y++) {
+			updateHTML(x, y);
+		}
+	}
+}
+function updateClock() {
+	clock++;
+	if (clock > 999) {
+		clearInterval(clockIntervalID);
+	}
+	document.querySelector("#clock").innerHTML = ("00" + clock).slice(-3);
+}
+function updateBombsFlagged() {
+	var numBombs = bombs - bombsFlagged;
+	var numBombsString = ("00" + Math.abs(numBombs)).slice(-3);
+	if (numBombs < 0) {
+		numBombsString = "-" + numBombsString.slice(1);
+	}
+
+	document.querySelector("#numBombs").innerHTML = numBombsString;
+}
+
+// EVENT LISTENERS
 function prepareFirstClick(x, y) {
 	var bombs = 0;
 	// Add up # of bombs, set all bombs to prevent bomb placement
@@ -236,7 +233,6 @@ function prepareFirstClick(x, y) {
 	updateAllHTML();
 	clockIntervalID = setInterval(updateClock, 1000);
 }
-
 function cellLeftClick(event) {
 	if (!playing) {
 		return;
