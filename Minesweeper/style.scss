@@ -1,37 +1,71 @@
-#minesweeper {
-	border-collapse: collapse;
-	td {
-		border: 1px solid black;
-		box-sizing: content-box;
-		text-align: center;
+$bordercolor: #7b7b7b;
 
-		height: 1em;
-		width: 1em;
-		font-size: 1em;
-		line-height: 1em;
+#minesweeper {
+	border-spacing: 0px;
+	border-top: 2px solid white;
+	border-left: 2px solid white;
+	border-bottom: 2px solid $bordercolor;
+	border-right: 2px solid $bordercolor;
+	td {
+		text-align: center;
+		font-weight: bold;
+		background-color: #bdbdbd;
+		background-position: center center;
+		background-repeat: no-repeat;
+		height: 20px;
+		width: 20px;
+		margin: 0;
+		padding: 0;
+		font-size: 16px;
+		line-height: 16px;
 		&[data-flagged="true"] {
 			// flagged
-			background: lightcoral;
+			background-image: url("images/flag.png");
 		}
 		&[data-hint="true"] {
 			// hint
-			background: blue;
+			background-image: url("images/hint.png");
 		}
 		&[data-activated="true"] {
 			// activate tile
-			background: grey;
+			border-top: 1px solid $bordercolor;
+			border-left: 1px solid $bordercolor;
+			border-bottom: 0;
+			border-right: 0;
 			&[data-bomb="true"] {
 				// bomb
-				background: red;
+				background-image: url("images/bomb.png");
 			}
 			&[data-death-bomb="true"] {
 				// death bomb
-				background: black;
+				background-image: url("images/bomb.png");
+				background-color: red;
 			}
 			&[data-flagged="true"] {
 				// misflagged
-				background: green;
+				background-image: url("images/misflag.png");
 			}
+			&[data-surrounding="1"] {color: blue;}
+			&[data-surrounding="2"] {color: #007b00;}
+			&[data-surrounding="3"] {color: red;}
+			&[data-surrounding="4"] {color: #00007b;}
+			&[data-surrounding="5"] {color: #7b0000;}
+			&[data-surrounding="6"] {color: #006968;}
+			&[data-surrounding="7"] {color: #007b7b;}
+			&[data-surrounding="8"] {color: #7b7b7b;}
+		}
+		&[data-activated="false"] {
+			border-top: 2px solid white;
+			border-left: 2px solid white;
+			border-bottom: 2px solid $bordercolor;
+			border-right: 2px solid $bordercolor;
 		}
 	}
+}
+
+
+// Preload images to not lag when clicking cells
+body:after {
+	content: url(images/bomb.png) url(images/flag.png) url(images/hint.png) url(images/misflag.png);
+	display: none;
 }
