@@ -5,6 +5,10 @@ var width = 30;
 var height = 16;
 var bombs = 99;
 var hints = false;
+var playing = true;
+var clock = 0;
+var bombsFlagged = 0;
+var clockIntervalID;
 
 var grid = [];
 var firstClick = true;
@@ -60,8 +64,7 @@ function generateGrid() {
 }
 
 function generateHTML() {
-	var table = document.createElement("table");
-	table.id = "minesweeper";
+	var table = document.querySelector("#minesweeper");
 	for (var y = 0; y < height; y++) {
 		var tr = document.createElement("tr");
 		for (var x = 0; x < width; x++) {
@@ -74,8 +77,8 @@ function generateHTML() {
 		}
 		table.appendChild(tr);
 	}
-	document.body.insertBefore(table, document.body.firstChild);
 	updateAllHTML();
+	updateBombsFlagged();
 }
 
 function updateHTML(x, y) {
@@ -87,7 +90,7 @@ function updateHTML(x, y) {
 	td.dataset.flagged = cell.flagged;
 	td.dataset.hint = cell.hint;
 
-	if (cell.activated && cell.surrounding >= 1) {
+	if (cell.activated && cell.surrounding >= 1 && !cell.bomb && !cell.flagged) {
 		td.innerHTML = cell.surrounding;
 	}
 	else {
@@ -103,11 +106,29 @@ function updateAllHTML() {
 	}
 }
 
+function updateClock() {
+	clock++;
+	if (clock > 999) {
+		clearInterval(clockIntervalID);
+	}
+	document.querySelector("#clock").innerHTML = ("00" + clock).slice(-3);
+}
+
+function updateBombsFlagged() {
+	var numBombs = bombs - bombsFlagged;
+	var numBombsString = ("00" + Math.abs(numBombs)).slice(-3);
+	if (numBombs < 0) {
+		numBombsString = "-" + numBombsString.slice(1);
+	}
+
+	document.querySelector("#numBombs").innerHTML = numBombsString;
+}
+
 function reveal(x, y) {
 	var cell = grid[x][y];
 	if (!cell.activated && !cell.flagged && !cell.hint) {
 		if (cell.bomb) {
-			gameOver();
+			gameOver(x, y);
 		}
 		else {
 			cell.activated = true;
@@ -117,7 +138,9 @@ function reveal(x, y) {
 		}
 	}
 	updateHTML(x, y);
-	// TODO: check win
+	if (checkWin()) {
+		win();
+	}
 }
 function revealSurroundings(x, y) {
 	for (var i = Math.max(x-1, 0); i <= Math.min(x+1, width - 1); i++) {
@@ -127,9 +150,63 @@ function revealSurroundings(x, y) {
 	}
 }
 
-function gameOver() {
-	// TODO: revealAllBombs();
+// Assumes loss
+function revealAllBombs() {
+	for (var x = 0; x < width; x++) {
+		for (var y = 0; y < height; y++) {
+			var cell = grid[x][y];
+			if (cell.bomb !== cell.flagged) {
+				cell.activated = true;
+				updateHTML(x, y);
+			}	
+		}
+	}
+}
+
+// Assumes win
+function flagAllBombs() {
+	for (var x = 0; x < width; x++) {
+		for (var y = 0; y < height; y++) {
+			var cell = grid[x][y];
+			if (cell.bomb) {
+				cell.flagged = true;
+				bombsFlagged++;
+				updateHTML(x, y);
+			}
+		}
+	}
+	updateBombsFlagged();
+}
+
+function deathBomb(x, y) {
+	var td = document.querySelector('#minesweeper td[data-x="'+x+'"][data-y="'+y+'"]');
+	td.dataset.deathBomb = true;
+}
+
+function gameOver(x, y) {
+	playing = false;
+	clearInterval(clockIntervalID);
+	deathBomb(x, y);
+	revealAllBombs();
 	alert("YOU LOSE");
+}
+function win() {
+	playing = false;
+	clearInterval(clockIntervalID);
+	flagAllBombs();
+	alert("YOU WIN");
+}
+
+function checkWin() {
+	for (var x = 0; x < width; x++) {
+		for (var y = 0; y < height; y++) {
+			var cell = grid[x][y];
+			if (cell.activated === cell.bomb) {
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
 function prepareFirstClick(x, y) {
@@ -157,9 +234,13 @@ function prepareFirstClick(x, y) {
 	}
 	calculateSurroundings();
 	updateAllHTML();
+	clockIntervalID = setInterval(updateClock, 1000);
 }
 
 function cellLeftClick(event) {
+	if (!playing) {
+		return;
+	}
 	var td = event.target;
 	var x = parseInt(td.dataset.x, 10);
 	var y = parseInt(td.dataset.y, 10);
@@ -188,6 +269,10 @@ function cellLeftClick(event) {
 	}
 }
 function cellRightClick(event) {
+	if (!playing) {
+		event.preventDefault();
+		return false;
+	}
 	var td = event.target;
 	var x = parseInt(td.dataset.x, 10);
 	var y = parseInt(td.dataset.y, 10);
@@ -199,16 +284,27 @@ function cellRightClick(event) {
 	}
 
 	if (hints) {
-		// !flag, !hint -> flag, !hint
-		// flag, !hint -> !flag, hint
-		// !flag, hint -> !flag, !hint
-		var hint = !cell.flagged;
-		var flagged = !cell.flagged && !cell.hint;
-		cell.hint = hint;
-		cell.flagged = flagged;
+		// Cycle flag -> hint -> nothing
+		if (cell.flagged) {
+			cell.flagged = false;
+			bombsFlagged--;
+			updateBombsFlagged();
+
+			cell.hint = true;
+		}
+		else if (cell.hint) {
+			cell.hint = false;
+		}
+		else {
+			cell.flagged = true;
+			bombsFlagged++;
+			updateBombsFlagged();
+		}
 	}
 	else {
 		cell.flagged = !cell.flagged;
+		bombsFlagged += (cell.flagged ? 1 : -1);
+		updateBombsFlagged();
 	}
 	updateHTML(x, y);
 

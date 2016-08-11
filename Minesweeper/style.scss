@@ -4,16 +4,34 @@
 		border: 1px solid black;
 		box-sizing: content-box;
 		text-align: center;
-		height: 16px;
-		width: 16px;
-		&[data-activated="true"] {
-			background: grey;
-		}
+
+		height: 1em;
+		width: 1em;
+		font-size: 1em;
+		line-height: 1em;
 		&[data-flagged="true"] {
+			// flagged
 			background: lightcoral;
 		}
-		// &[data-bomb="true"] {
-		// 	background: red;
-		// }
+		&[data-hint="true"] {
+			// hint
+			background: blue;
+		}
+		&[data-activated="true"] {
+			// activate tile
+			background: grey;
+			&[data-bomb="true"] {
+				// bomb
+				background: red;
+			}
+			&[data-death-bomb="true"] {
+				// death bomb
+				background: black;
+			}
+			&[data-flagged="true"] {
+				// misflagged
+				background: green;
+			}
+		}
 	}
 }
