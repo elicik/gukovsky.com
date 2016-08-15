@@ -1,18 +1,18 @@
 "use strict";
 
 // Settings
-var width = 30;
-var height = 16;
-var bombs = 99;
-var hints = false;
-var playing = true;
-var clock = 0;
-var bombsFlagged = 0;
+var width;
+var height;
+var bombs;
+var hints;
+var playing;
+var clock;
+var bombsFlagged;
 var clockIntervalID;
+var grid;
+var firstClick;
 
 // SETUP
-var grid = [];
-var firstClick = true;
 
 var Cell = function() {
 	this.bomb = false;
@@ -21,6 +21,23 @@ var Cell = function() {
 	this.flagged = false;
 	this.hint = false;
 	this.deathBomb = false;
+}
+
+function newGame() {
+	width = 30;
+	height = 16;
+	bombs = 99;
+	hints = false;
+	playing = true;
+	clock = 0;
+	bombsFlagged = 0;
+	grid = [];
+	firstClick = true;
+	clearInterval(clockIntervalID);
+	clearHTML();
+	generateGrid();
+	calculateSurroundings();
+	generateHTML();
 }
 
 // GAME BASICS
@@ -164,6 +181,13 @@ function generateHTML() {
 	updateAllHTML();
 	updateBombsFlagged();
 }
+function clearHTML() {
+	// Also clears all eventListeners from the cells
+	var table = document.querySelector("#minesweeper");
+	while (table.firstChild) {
+	    table.removeChild(table.firstChild);
+	}
+}
 function updateHTML(x, y) {
 	var td = document.querySelector('#minesweeper td[data-x="'+x+'"][data-y="'+y+'"]');
 	var cell = grid[x][y];
@@ -231,6 +255,7 @@ function prepareFirstClick(x, y) {
 	}
 	calculateSurroundings();
 	updateAllHTML();
+	document.querySelector("#clock").innerHTML = ("000");
 	clockIntervalID = setInterval(updateClock, 1000);
 }
 function cellLeftClick(event) {
@@ -308,8 +333,8 @@ function cellRightClick(event) {
 	return false;
 }
 
+// MAIN
 document.addEventListener("DOMContentLoaded", function(event) {
-	generateGrid();
-	calculateSurroundings();
-	generateHTML();
+	newGame();
+	document.querySelector("#smiley").addEventListener("click", newGame);
 });

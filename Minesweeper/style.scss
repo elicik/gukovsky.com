@@ -1,29 +1,67 @@
 $bordercolor: #7b7b7b;
+$backgroundcolor: #bdbdbd;
+$cellsize: 20;
+
+#wrapper {
+	-webkit-touch-callout: none; /* iOS Safari */
+	  -webkit-user-select: none; /* Chrome/Safari/Opera */
+	   -khtml-user-select: none; /* Konqueror */
+	     -moz-user-select: none; /* Firefox */
+	      -ms-user-select: none; /* Internet Explorer/Edge */
+	          user-select: none; /* Non-prefixed version, currently not supported by any browser */
+	margin: 0 auto;
+	background-color: $backgroundcolor;
+	border-top: 2px solid white;
+	border-left: 2px solid white;
+	border-bottom: 2px solid $bordercolor;
+	border-right: 2px solid $bordercolor;
+}
+#toprow td div {
+	margin: 0 auto;
+	font-size: #{$cellsize - 4}px;
+	line-height: #{$cellsize - 4}px;
+	text-align: center;
+
+	border-top: 2px solid white;
+	border-left: 2px solid white;
+	border-bottom: 2px solid $bordercolor;
+	border-right: 2px solid $bordercolor;
+}
+#numBombs, #clock {
+	width: #{2*$cellsize}px;
+	height: #{$cellsize}px;
+}
+#smiley {
+	width: #{2*$cellsize}px;
+	height: #{2*$cellsize}px;
+	&:active {
+		border-top: 1px solid $bordercolor;
+		border-left: 1px solid $bordercolor;
+		border-bottom: 0;
+		border-right: 0;
+	}
+}
 
 #minesweeper {
+	margin: 0 auto;
 	border-spacing: 0px;
 	border-top: 2px solid white;
 	border-left: 2px solid white;
 	border-bottom: 2px solid $bordercolor;
 	border-right: 2px solid $bordercolor;
 	td {
-		-webkit-touch-callout: none; /* iOS Safari */
-		  -webkit-user-select: none; /* Chrome/Safari/Opera */
-		   -khtml-user-select: none; /* Konqueror */
-		     -moz-user-select: none; /* Firefox */
-		      -ms-user-select: none; /* Internet Explorer/Edge */
-		          user-select: none; /* Non-prefixed version, currently not supported by any browser */
 		text-align: center;
 		font-weight: bold;
-		background-color: #bdbdbd;
+		background-color: $backgroundcolor;
 		background-position: center center;
 		background-repeat: no-repeat;
-		height: 20px;
-		width: 20px;
+		background-size: #{$cellsize - 4}px;
+		height: #{$cellsize}px;
+		width: #{$cellsize}px;
 		margin: 0;
 		padding: 0;
-		font-size: 16px;
-		line-height: 16px;
+		font-size: #{$cellsize - 4}px;
+		line-height: #{$cellsize - 4}px;
 		cursor: default;
 		&[data-flagged="true"] {
 			// flagged
