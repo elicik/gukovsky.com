@@ -32,8 +32,8 @@ $cellsize: 20;
 	height: #{$cellsize}px;
 }
 #smiley {
-	width: #{2*$cellsize}px;
-	height: #{2*$cellsize}px;
+	width: #{$cellsize + 4}px;
+	height: #{$cellsize + 4}px;
 	background-position: center center;
 	background-repeat: no-repeat;
 	background-size: #{$cellsize}px;
@@ -43,9 +43,6 @@ $cellsize: 20;
 		border-left: 1px solid $bordercolor;
 		border-bottom: 0;
 		border-right: 0;
-	}
-	&[data-smiley="ooh"] {
-		background-image: url("images/faceooh.png");
 	}
 }
 
@@ -124,6 +121,6 @@ $cellsize: 20;
 
 // Preload images to not lag when clicking cells
 body:after {
-	content: url(images/bomb.png) url(images/flag.png) url(images/hint.png) url(images/misflag.png) url(images/facesmile.png) url(images/faceooh.png);
+	content: url(images/bomb.png) url(images/flag.png) url(images/hint.png) url(images/misflag.png) url(images/facesmile.png) url(images/faceooh.png) url("images/facedead.png")  url("images/facewin.png");
 	display: none;
 }

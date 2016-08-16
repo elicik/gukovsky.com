@@ -38,6 +38,7 @@ function newGame() {
 	generateGrid();
 	calculateSurroundings();
 	generateHTML();
+	document.querySelector("#smiley").style.backgroundImage = 'url("images/facesmile.png")';
 }
 
 // GAME BASICS
@@ -142,13 +143,13 @@ function gameOver(x, y) {
 	cell.deathBomb = true;
 	updateHTML(x, y);
 	revealAllBombs();
-	alert("YOU LOSE");
+	document.querySelector("#smiley").style.backgroundImage = 'url("images/facedead.png")';
 }
 function win() {
 	playing = false;
 	clearInterval(clockIntervalID);
 	flagAllBombs();
-	alert("YOU WIN");
+	document.querySelector("#smiley").style.backgroundImage = 'url("images/facewin.png")';
 }
 function checkWin() {
 	for (var x = 0; x < width; x++) {
