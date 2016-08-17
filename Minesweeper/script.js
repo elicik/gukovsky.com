@@ -12,8 +12,32 @@ var clockIntervalID;
 var grid;
 var firstClick;
 var oldFashioned = false;
-var xyzzy = false;
 var ignoreMouseUpOnce = false;
+
+
+// xyzzy
+var xyzzy = false;
+var xyzzyIndex = 0;
+
+window.addEventListener("keypress", testForxyzzy);
+function testForxyzzy(event) {
+	if (xyzzyIndex === 5 ) {
+		if (event.keyCode === 13 && event.shiftKey) {
+			xyzzy = true;
+			window.removeEventListener("keypress", testForxyzzy);
+		}
+		else {
+			xyzzyIndex = 0;
+		}
+	}
+
+	if (String.fromCharCode(event.keyCode) === "xyzzy"[xyzzyIndex]) {
+		xyzzyIndex++;
+	}
+	else {
+		xyzzyIndex = (String.fromCharCode(event.keyCode) === "xyzzy"[0]) ? 1 : 0;
+	}
+}
 
 // SETUP
 
@@ -396,7 +420,32 @@ function mousedown(event) {
 		}
 	}
 	else if (!leftButton && rightButton) {
-		cellRightClick(x, y);
+		if (!cell.activated) {
+			if (hints) {
+				// Cycle flag -> hint -> nothing
+				if (cell.flagged) {
+					cell.flagged = false;
+					bombsFlagged--;
+					updateBombsFlagged();
+
+					cell.hint = true;
+				}
+				else if (cell.hint) {
+					cell.hint = false;
+				}
+				else {
+					cell.flagged = true;
+					bombsFlagged++;
+					updateBombsFlagged();
+				}
+			}
+			else {
+				cell.flagged = !cell.flagged;
+				bombsFlagged += (cell.flagged ? 1 : -1);
+				updateBombsFlagged();
+			}
+			updateHTML(x, y);
+		}
 	}
 
 	if (leftButton) {
@@ -442,62 +491,6 @@ function mouseup(event) {
 	if (!leftButton) {
 		document.querySelector("#smiley").dataset.ooh = false;
 	}
-}
-function cellLeftClick(x, y) {
-	if (firstClick) {
-		prepareFirstClick(x, y);
-		firstClick = false;
-	}
-
-	var cell = grid[x][y];
-	if (cell.activated) {
-		var surroundingFlags = 0;
-		for (var i = Math.max(x-1, 0); i <= Math.min(x+1, width - 1); i++) {
-			for (var j = Math.max(y-1, 0); j <= Math.min(y+1, height - 1); j++) {
-				if (grid[i][j].flagged) {
-					surroundingFlags++;
-				}
-			}
-		}
-		if (cell.surrounding === surroundingFlags) {
-			revealSurroundings(x, y);
-		}
-	}
-	else {
-		reveal(x, y);
-	}
-}
-function cellRightClick(x, y) {
-	var cell = grid[x][y];
-	if (cell.activated) {
-		event.preventDefault();
-		return false;
-	}
-
-	if (hints) {
-		// Cycle flag -> hint -> nothing
-		if (cell.flagged) {
-			cell.flagged = false;
-			bombsFlagged--;
-			updateBombsFlagged();
-
-			cell.hint = true;
-		}
-		else if (cell.hint) {
-			cell.hint = false;
-		}
-		else {
-			cell.flagged = true;
-			bombsFlagged++;
-			updateBombsFlagged();
-		}
-	}
-	else {
-		cell.flagged = !cell.flagged;
-		bombsFlagged += (cell.flagged ? 1 : -1);
-		updateBombsFlagged();
-	}
-	updateHTML(x, y);
 }
 
 // MAIN
