@@ -55,17 +55,35 @@ var DIFFICULTIES = {
 	BEGINNER: {
 		width: 9,
 		height: 9,
-		bombs: 10
+		bombs: 10,
+		getHighscore: function() {
+			return localStorage.getItem("minesweeper-highscore-beginner");
+		},
+		setHighscore: function(newscore) {
+			localStorage.setItem("minesweeper-highscore-beginner", newscore);
+		} 
 	},
 	INTERMEDIATE: {
 		width: 16,
 		height: 16,
-		bombs: 40
+		bombs: 40,
+		getHighscore: function() {
+			return localStorage.getItem("minesweeper-highscore-intermediate");
+		},
+		setHighscore: function(newscore) {
+			localStorage.setItem("minesweeper-highscore-intermediate", newscore);
+		} 
 	},
 	EXPERT: {
 		width: 30,
 		height: 16,
-		bombs: 99
+		bombs: 99,
+		getHighscore: function() {
+			return localStorage.getItem("minesweeper-highscore-expert");
+		},
+		setHighscore: function(newscore) {
+			localStorage.setItem("minesweeper-highscore-expert", newscore);
+		} 
 	}
 }
 var selectedDifficulty = DIFFICULTIES.INTERMEDIATE;
@@ -233,6 +251,12 @@ function win() {
 	clearInterval(clockIntervalID);
 	flagAllBombs();
 	document.querySelector("#smiley").dataset.win = true;
+
+	// Highscores
+	if (selectedDifficulty.getHighscore() === null || parseInt(selectedDifficulty.getHighscore(), 10) > clock) {
+		alert("Congrats! You got a highscore of " + clock + "!");
+		selectedDifficulty.setHighscore(clock);
+	}
 }
 function checkWin() {
 	for (var x = 0; x < width; x++) {
@@ -493,6 +517,18 @@ function mouseup(event) {
 	}
 }
 
+// LOCAL STORAGE
+function setOptions() {
+	localStorage.setItem("minesweeper-size", document.querySelector("#size").value);
+	localStorage.setItem("minesweeper-difficulty", document.querySelector("#difficulty").value);
+	localStorage.setItem("minesweeper-oldfashioned", document.querySelector("#oldfashioned").checked);
+}
+function applyOptions() {
+	document.body.id = "size-" + localStorage.getItem("minesweeper-size");
+	selectedDifficulty = DIFFICULTIES[localStorage.getItem("minesweeper-difficulty")];
+	oldFashioned = (localStorage.getItem("minesweeper-oldfashioned") === "true");
+}
+
 // MAIN
 document.addEventListener("DOMContentLoaded", function(event) {
 	document.querySelector("#smiley").addEventListener("click", newGame);
@@ -503,16 +539,30 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		return false;
 	});
 
+	// Use localstorage to store options
+	if (localStorage.getItem("minesweeper-size") !== null) {
+		applyOptions();
+		document.querySelector("#size").value = localStorage.getItem("minesweeper-size");
+		document.querySelector("#difficulty").value = localStorage.getItem("minesweeper-difficulty");
+		document.querySelector("#oldfashioned").checked = (localStorage.getItem("minesweeper-oldfashioned") === "true");
+	}
+	else {
+		setOptions();
+	}
+
 	// Bottom bar options
 	document.querySelector("#size").addEventListener("change", function(event) {
-		document.body.id = "size-" + event.target.value;
+		setOptions();
+		applyOptions();
 	});
 	document.querySelector("#difficulty").addEventListener("change", function(event) {
-		selectedDifficulty = DIFFICULTIES[event.target.value];
+		setOptions();
+		applyOptions();
 		newGame();
 	});
 	document.querySelector("#oldfashioned").addEventListener("change", function(event) {
-		oldFashioned = event.target.checked;
+		setOptions();
+		applyOptions();
 	});
 
 	// Start the game!
