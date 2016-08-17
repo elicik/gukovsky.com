@@ -253,7 +253,7 @@ function win() {
 	document.querySelector("#smiley").dataset.win = true;
 
 	// Highscores
-	if (selectedDifficulty.getHighscore() === null || parseInt(selectedDifficulty.getHighscore(), 10) > clock) {
+	if (!xyzzy && (selectedDifficulty.getHighscore() === null || parseInt(selectedDifficulty.getHighscore(), 10) > clock)) {
 		alert("Congrats! You got a highscore of " + clock + "!");
 		selectedDifficulty.setHighscore(clock);
 	}
