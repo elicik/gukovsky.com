@@ -1,43 +1,51 @@
 $bordercolor: #7b7b7b;
 $backgroundcolor: #bdbdbd;
-$cellsize: 20;
 
-#wrapper {
-	-webkit-touch-callout: none; /* iOS Safari */
-	  -webkit-user-select: none; /* Chrome/Safari/Opera */
-	   -khtml-user-select: none; /* Konqueror */
-	     -moz-user-select: none; /* Firefox */
-	      -ms-user-select: none; /* Internet Explorer/Edge */
-	          user-select: none; /* Non-prefixed version, currently not supported by any browser */
-	margin: 0 auto;
-	background-color: $backgroundcolor;
-	border-top: 2px solid white;
-	border-left: 2px solid white;
-	border-bottom: 2px solid $bordercolor;
-	border-right: 2px solid $bordercolor;
-}
-#toprow td div {
-	margin: 0 auto;
-	font-size: #{$cellsize - 4}px;
-	line-height: #{$cellsize - 4}px;
-	text-align: center;
-
-	border-top: 2px solid white;
-	border-left: 2px solid white;
-	border-bottom: 2px solid $bordercolor;
-	border-right: 2px solid $bordercolor;
+#outer {
+	display: flex;
+	#wrapper {
+		-webkit-touch-callout: none; /* iOS Safari */
+		  -webkit-user-select: none; /* Chrome/Safari/Opera */
+		   -khtml-user-select: none; /* Konqueror */
+		     -moz-user-select: none; /* Firefox */
+		      -ms-user-select: none; /* Internet Explorer/Edge */
+		          user-select: none; /* Non-prefixed version, currently not supported by any browser */
+		margin: 0 auto;
+		background-color: $backgroundcolor;
+		border-top: 2px solid white;
+		border-left: 2px solid white;
+		border-bottom: 2px solid $bordercolor;
+		border-right: 2px solid $bordercolor;
+		display: flex;
+		flex-direction: column;
+		padding: 4px;
+		.row {
+			padding: 2px;
+			display: flex;
+			align-items: center;
+			.item-container {
+				flex-grow: 1;
+				text-align: center;
+			}
+		}
+	}
 }
 #numBombs, #clock {
-	width: #{2*$cellsize}px;
-	height: #{$cellsize}px;
+	color: red;
+	font-family: monospace;
 }
-#smiley {
-	width: #{$cellsize + 4}px;
-	height: #{$cellsize + 4}px;
+#smiley {	
 	background-position: center center;
 	background-repeat: no-repeat;
-	background-size: #{$cellsize}px;
 	background-image: url("images/facesmile.png");
+	&[data-ooh="true"] {background-image: url("images/faceooh.png");}
+	&[data-dead="true"] {background-image: url("images/facedead.png");}
+	&[data-win="true"] {background-image: url("images/facewin.png");}
+	margin: 0 auto;
+	border-top: 2px solid white;
+	border-left: 2px solid white;
+	border-bottom: 2px solid $bordercolor;
+	border-right: 2px solid $bordercolor;
 	&:active {
 		border-top: 1px solid $bordercolor;
 		border-left: 1px solid $bordercolor;
@@ -45,7 +53,13 @@ $cellsize: 20;
 		border-right: 0;
 	}
 }
-
+#xyzzy {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 1px;
+	height: 1px;
+}
 #minesweeper {
 	margin: 0 auto;
 	border-spacing: 0px;
@@ -59,13 +73,8 @@ $cellsize: 20;
 		background-color: $backgroundcolor;
 		background-position: center center;
 		background-repeat: no-repeat;
-		background-size: #{$cellsize - 4}px;
-		height: #{$cellsize}px;
-		width: #{$cellsize}px;
 		margin: 0;
 		padding: 0;
-		font-size: #{$cellsize - 4}px;
-		line-height: #{$cellsize - 4}px;
 		cursor: default;
 		&[data-flagged="true"] {
 			// flagged
@@ -75,8 +84,8 @@ $cellsize: 20;
 			// hint
 			background-image: url("images/hint.png");
 		}
+
 		&[data-activated="true"] {
-			// activate tile
 			border-top: 1px solid $bordercolor;
 			border-left: 1px solid $bordercolor;
 			border-bottom: 0;
@@ -108,15 +117,40 @@ $cellsize: 20;
 			border-left: 2px solid white;
 			border-bottom: 2px solid $bordercolor;
 			border-right: 2px solid $bordercolor;
-			&:active {
-				border-top: 1px solid $bordercolor;
-				border-left: 1px solid $bordercolor;
-				border-bottom: 0;
-				border-right: 0;
-			}
+		}
+		&[data-hover="true"][data-flagged="false"][data-hint="false"] {
+			border-top: 1px solid $bordercolor;
+			border-left: 1px solid $bordercolor;
+			border-bottom: 0;
+			border-right: 0;
 		}
 	}
 }
+
+
+// Allow for size choices
+@each $cellsize in 20, 30, 40 {
+	#size-#{$cellsize} {
+		.item-container {
+			font-size: #{$cellsize - 4}px;
+			line-height: #{$cellsize - 4}px;
+		}
+		#smiley {
+			width: #{$cellsize + 4}px;
+			height: #{$cellsize + 4}px;
+			background-size: #{$cellsize}px;
+		}
+		#minesweeper td {
+			background-size: #{$cellsize - 4}px;
+			height: #{$cellsize}px;
+			width: #{$cellsize}px;
+			font-size: #{$cellsize - 4}px;
+			line-height: #{$cellsize - 4}px;			
+		}
+
+	}
+}
+
 
 
 // Preload images to not lag when clicking cells

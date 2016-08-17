@@ -11,6 +11,9 @@ var bombsFlagged;
 var clockIntervalID;
 var grid;
 var firstClick;
+var oldFashioned = false;
+var xyzzy = false;
+var ignoreMouseUpOnce = false;
 
 // SETUP
 
@@ -21,12 +24,32 @@ var Cell = function() {
 	this.flagged = false;
 	this.hint = false;
 	this.deathBomb = false;
+	this.hover = false;
 }
 
+var DIFFICULTIES = {
+	BEGINNER: {
+		width: 9,
+		height: 9,
+		bombs: 10
+	},
+	INTERMEDIATE: {
+		width: 16,
+		height: 16,
+		bombs: 40
+	},
+	EXPERT: {
+		width: 30,
+		height: 16,
+		bombs: 99
+	}
+}
+var selectedDifficulty = DIFFICULTIES.INTERMEDIATE;
+
 function newGame() {
-	width = 30;
-	height = 16;
-	bombs = 99;
+	width = selectedDifficulty.width;
+	height = selectedDifficulty.height;
+	bombs = selectedDifficulty.bombs;
 	hints = false;
 	playing = true;
 	clock = 0;
@@ -38,7 +61,9 @@ function newGame() {
 	generateGrid();
 	calculateSurroundings();
 	generateHTML();
-	document.querySelector("#smiley").style.backgroundImage = 'url("images/facesmile.png")';
+	document.querySelector("#smiley").dataset.ooh = false;
+	document.querySelector("#smiley").dataset.dead = false;
+	document.querySelector("#smiley").dataset.win = false;
 }
 
 // GAME BASICS
@@ -134,6 +159,40 @@ function flagAllBombs() {
 	}
 	updateBombsFlagged();
 }
+function clearAllHover() {
+	for (var x = 0; x < width; x++) {
+		for (var y = 0; y < height; y++) {
+			var cell = grid[x][y];
+			if (cell.hover) {
+				cell.hover = false;
+				updateHTML(x, y);
+			}	
+		}
+	}
+}
+function hoverSurroundings(x, y) {
+	for (var i = Math.max(x-1, 0); i <= Math.min(x+1, width - 1); i++) {
+		for (var j = Math.max(y-1, 0); j <= Math.min(y+1, height - 1); j++) {
+			var cell = grid[i][j];
+			cell.hover = true;
+			updateHTML(i, j);
+		}
+	}
+}
+function checkFlagsForReveal(x, y) {
+	var cell = grid[x][y];
+	var surroundingFlags = 0;
+	for (var i = Math.max(x-1, 0); i <= Math.min(x+1, width - 1); i++) {
+		for (var j = Math.max(y-1, 0); j <= Math.min(y+1, height - 1); j++) {
+			if (grid[i][j].flagged) {
+				surroundingFlags++;
+			}
+		}
+	}
+	if (cell.surrounding === surroundingFlags) {
+		revealSurroundings(x, y);
+	}
+}
 
 // WINNING AND LOSING
 function gameOver(x, y) {
@@ -143,13 +202,13 @@ function gameOver(x, y) {
 	cell.deathBomb = true;
 	updateHTML(x, y);
 	revealAllBombs();
-	document.querySelector("#smiley").style.backgroundImage = 'url("images/facedead.png")';
+	document.querySelector("#smiley").dataset.dead = true;
 }
 function win() {
 	playing = false;
 	clearInterval(clockIntervalID);
 	flagAllBombs();
-	document.querySelector("#smiley").style.backgroundImage = 'url("images/facewin.png")';
+	document.querySelector("#smiley").dataset.win = true;
 }
 function checkWin() {
 	for (var x = 0; x < width; x++) {
@@ -173,8 +232,8 @@ function generateHTML() {
 			var td = document.createElement("td");
 			td.dataset.x = x;
 			td.dataset.y = y;
-			td.addEventListener("click", cellLeftClick);
-			td.addEventListener("contextmenu", cellRightClick);
+			td.addEventListener("mouseover", mouseover);
+			td.addEventListener("mouseout", mouseout);
 			tr.appendChild(td);
 		}
 		table.appendChild(tr);
@@ -198,6 +257,7 @@ function updateHTML(x, y) {
 	td.dataset.flagged = cell.flagged;
 	td.dataset.hint = cell.hint;
 	td.dataset.deathBomb = cell.deathBomb;
+	td.dataset.hover = cell.hover;
 
 	if (cell.activated && cell.surrounding >= 1 && !cell.bomb && !cell.flagged) {
 		td.innerHTML = cell.surrounding;
@@ -259,14 +319,131 @@ function prepareFirstClick(x, y) {
 	document.querySelector("#clock").innerHTML = ("000");
 	clockIntervalID = setInterval(updateClock, 1000);
 }
-function cellLeftClick(event) {
+function mouseover(event) {
+	if (!playing) {
+		return;
+	}
+	var td = event.target;
+	td.addEventListener("mousedown", mousedown);
+	td.addEventListener("mouseup", mouseup);
+	var x = parseInt(td.dataset.x, 10);
+	var y = parseInt(td.dataset.y, 10);
+	var cell = grid[x][y];
+
+	var leftButton = ((event.buttons & 0b1) === 0b1);
+	var rightButton = ((event.buttons & 0b10) === 0b10);
+
+	clearAllHover();
+	if (leftButton && !rightButton) {
+		if (cell.activated && !oldFashioned) {
+			hoverSurroundings(x, y);
+		}
+		else {
+			cell.hover = true;
+			updateHTML(x, y);
+		}
+	}
+	if (leftButton && rightButton) {
+		if (oldFashioned) {
+			hoverSurroundings(x, y);
+		}
+		else {
+			cell.hover = true;
+			updateHTML(x, y);
+		}
+	}
+	if (xyzzy) {
+		document.querySelector("#xyzzy").style.background = (cell.bomb ? "black" : "white");
+	}
+}
+function mouseout(event) {
+	if (!playing) {
+		return;
+	}
+	var td = event.target;
+	td.removeEventListener("mousedown", mousedown);
+	td.removeEventListener("mouseup", mouseup);
+}
+function mousedown(event) {
 	if (!playing) {
 		return;
 	}
 	var td = event.target;
 	var x = parseInt(td.dataset.x, 10);
 	var y = parseInt(td.dataset.y, 10);
+	var cell = grid[x][y];
 
+	var leftButton = ((event.buttons & 0b1) === 0b1);
+	var rightButton = ((event.buttons & 0b10) === 0b10);
+
+	clearAllHover();
+	if (leftButton && !rightButton) {
+		if (cell.activated && !oldFashioned) {
+			hoverSurroundings(x, y);
+		}
+		else {
+			cell.hover = true;
+			updateHTML(x, y);
+		}
+	}
+	else if (leftButton && rightButton) {
+		if (oldFashioned) {
+			hoverSurroundings(x, y);
+		}
+		else {
+			cell.hover = true;
+			updateHTML(x, y);
+		}
+	}
+	else if (!leftButton && rightButton) {
+		cellRightClick(x, y);
+	}
+
+	if (leftButton) {
+		document.querySelector("#smiley").dataset.ooh = true;
+	}
+}
+function mouseup(event) {
+	if (!playing) {
+		return;
+	}
+	var td = event.target;
+	var x = parseInt(td.dataset.x, 10);
+	var y = parseInt(td.dataset.y, 10);
+	var cell = grid[x][y];
+
+	var leftButton = ((event.buttons & 0b1) === 0b1);
+	var rightButton = ((event.buttons & 0b10) === 0b10);
+	clearAllHover();
+	// event.button is the button released, 0 is left, 2 is right
+	if ((rightButton && event.button === 0) ||(leftButton && event.button === 2)) {
+		if (cell.activated && oldFashioned) {
+			checkFlagsForReveal(x, y);
+		}
+		ignoreMouseUpOnce = true;
+		return;
+	}
+	if (ignoreMouseUpOnce) {
+		ignoreMouseUpOnce = false;
+	}
+	else if (!leftButton && !rightButton && event.button === 0) {
+		if (cell.activated && !oldFashioned) {
+				checkFlagsForReveal(x, y);
+		}
+		if (!cell.activated) {
+			if (firstClick) {
+				prepareFirstClick(x, y);
+				firstClick = false;
+			}
+			reveal(x, y);
+		}
+	}
+
+	if (!leftButton) {
+		document.querySelector("#smiley").dataset.ooh = false;
+	}
+}
+function cellLeftClick(x, y) {
 	if (firstClick) {
 		prepareFirstClick(x, y);
 		firstClick = false;
@@ -290,16 +467,8 @@ function cellLeftClick(event) {
 		reveal(x, y);
 	}
 }
-function cellRightClick(event) {
-	if (!playing) {
-		event.preventDefault();
-		return false;
-	}
-	var td = event.target;
-	var x = parseInt(td.dataset.x, 10);
-	var y = parseInt(td.dataset.y, 10);
+function cellRightClick(x, y) {
 	var cell = grid[x][y];
-
 	if (cell.activated) {
 		event.preventDefault();
 		return false;
@@ -329,13 +498,30 @@ function cellRightClick(event) {
 		updateBombsFlagged();
 	}
 	updateHTML(x, y);
-
-	event.preventDefault();
-	return false;
 }
 
 // MAIN
 document.addEventListener("DOMContentLoaded", function(event) {
-	newGame();
 	document.querySelector("#smiley").addEventListener("click", newGame);
+
+	// Prevent right clicks from interfering
+	document.querySelector("#minesweeper").addEventListener("contextmenu", function(event) {
+		event.preventDefault();
+		return false;
+	});
+
+	// Bottom bar options
+	document.querySelector("#size").addEventListener("change", function(event) {
+		document.body.id = "size-" + event.target.value;
+	});
+	document.querySelector("#difficulty").addEventListener("change", function(event) {
+		selectedDifficulty = DIFFICULTIES[event.target.value];
+		newGame();
+	});
+	document.querySelector("#oldfashioned").addEventListener("change", function(event) {
+		oldFashioned = event.target.checked;
+	});
+
+	// Start the game!
+	newGame();
 });
