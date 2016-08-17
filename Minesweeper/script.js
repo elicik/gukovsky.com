@@ -22,7 +22,7 @@ var xyzzyIndex = 0;
 window.addEventListener("keypress", testForxyzzy);
 function testForxyzzy(event) {
 	if (xyzzyIndex === 5 ) {
-		if (event.keyCode === 13 && event.shiftKey) {
+		if (event.key === "Enter" && event.shiftKey) {
 			xyzzy = true;
 			window.removeEventListener("keypress", testForxyzzy);
 		}
@@ -31,11 +31,11 @@ function testForxyzzy(event) {
 		}
 	}
 
-	if (String.fromCharCode(event.keyCode) === "xyzzy"[xyzzyIndex]) {
+	if (event.key === "xyzzy"[xyzzyIndex]) {
 		xyzzyIndex++;
 	}
 	else {
-		xyzzyIndex = (String.fromCharCode(event.keyCode) === "xyzzy"[0]) ? 1 : 0;
+		xyzzyIndex = (event.key === "xyzzy"[0]) ? 1 : 0;
 	}
 }
 
