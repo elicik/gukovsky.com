@@ -265,7 +265,12 @@ function win() {
 
 	// Highscores
 	if (!xyzzy && (selectedDifficulty.getHighscore() === null || parseInt(selectedDifficulty.getHighscore(), 10) > clock)) {
-		alert("Congrats! You got a highscore of " + clock + "!");
+		swal({
+			title: "Congrats!",
+			text: "You got a highscore of " + clock + "!",
+			type: "success",
+			timer: 4000,
+		});
 		selectedDifficulty.setHighscore(clock);
 		document.querySelector("#highscore").innerHTML = selectedDifficulty.getHighscore();
 	}
