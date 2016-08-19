@@ -57,7 +57,7 @@ $backgroundcolor: #bdbdbd;
 		border-right: 0;
 	}
 }
-#checkboxes {
+.flex-column-layout {
 	display: flex;
 	flex-direction: column;
 }

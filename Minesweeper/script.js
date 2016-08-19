@@ -267,6 +267,7 @@ function win() {
 	if (!xyzzy && (selectedDifficulty.getHighscore() === null || parseInt(selectedDifficulty.getHighscore(), 10) > clock)) {
 		alert("Congrats! You got a highscore of " + clock + "!");
 		selectedDifficulty.setHighscore(clock);
+		document.querySelector("#highscore").innerHTML = selectedDifficulty.getHighscore();
 	}
 }
 function checkWin() {
@@ -540,6 +541,7 @@ function applyOptions() {
 	selectedDifficulty = DIFFICULTIES[localStorage.getItem("minesweeper-difficulty")];
 	oldFashioned = (localStorage.getItem("minesweeper-oldfashioned") === "true");
 	hints = (localStorage.getItem("minesweeper-hints") === "true");
+	document.querySelector("#highscore").innerHTML = (selectedDifficulty.getHighscore() ? selectedDifficulty.getHighscore() : "None yet!");
 }
 
 // MAIN

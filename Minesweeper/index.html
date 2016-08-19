@@ -40,14 +40,21 @@
 						</select>
 					</div>
 					<div class="item-container">
-						<select id="difficulty" class="extra-margin">
-							<option value="BEGINNER">Beginner</option>
-							<option value="INTERMEDIATE" selected>Intermediate</option>
-							<option value="EXPERT">Expert</option>
-						</select>
+						<div class="flex-column-layout">
+							<div class="extra-margin">
+								<select id="difficulty">
+									<option value="BEGINNER">Beginner</option>
+									<option value="INTERMEDIATE" selected>Intermediate</option>
+									<option value="EXPERT">Expert</option>
+								</select>
+							</div>
+							<div class="extra-margin">
+								Highscore: <span id="highscore">None yet!</span>
+							</div>
+						</div>
 					</div>
 					<div class="item-container">
-						<div id="checkboxes">
+						<div class="flex-column-layout">
 							<div class="extra-margin">
 								<label for="hints" title="Hints act like normal tiles, but are helpful for some players">Hints (?): </label>
 								<input type="checkbox" id="hints">								
