@@ -4,13 +4,13 @@
 var width;
 var height;
 var bombs;
-var hints;
 var playing;
 var clock;
 var bombsFlagged;
 var clockIntervalID;
 var grid;
 var firstClick;
+var hints = false;
 var oldFashioned = false;
 var ignoreMouseUpOnce = false;
 
@@ -22,7 +22,7 @@ var xyzzyIndex = 0;
 window.addEventListener("keypress", testForxyzzy);
 function testForxyzzy(event) {
 	if (xyzzyIndex === 5 ) {
-		if (event.key === "Enter" && event.shiftKey) {
+		if (event.which === 13 && event.shiftKey) {
 			xyzzy = true;
 			window.removeEventListener("keypress", testForxyzzy);
 		}
@@ -31,11 +31,11 @@ function testForxyzzy(event) {
 		}
 	}
 
-	if (event.key === "xyzzy"[xyzzyIndex]) {
+	if (String.fromCharCode(event.which) === "xyzzy"[xyzzyIndex]) {
 		xyzzyIndex++;
 	}
 	else {
-		xyzzyIndex = (event.key === "xyzzy"[0]) ? 1 : 0;
+		xyzzyIndex = (String.fromCharCode(event.which) === "xyzzy"[0]) ? 1 : 0;
 	}
 }
 
@@ -92,7 +92,6 @@ function newGame() {
 	width = selectedDifficulty.width;
 	height = selectedDifficulty.height;
 	bombs = selectedDifficulty.bombs;
-	hints = false;
 	playing = true;
 	clock = 0;
 	bombsFlagged = 0;
@@ -152,7 +151,8 @@ function placeBomb() {
 }
 function reveal(x, y) {
 	var cell = grid[x][y];
-	if (!cell.activated && !cell.flagged && !cell.hint) {
+	if (!cell.activated && !cell.flagged) {
+		cell.hint = false;
 		if (cell.bomb) {
 			gameOver(x, y);
 		}
@@ -209,6 +209,17 @@ function clearAllHover() {
 				cell.hover = false;
 				updateHTML(x, y);
 			}	
+		}
+	}
+}
+function clearAllHints() {
+	for (var x = 0; x < width; x++) {
+		for (var y = 0; y < height; y++) {
+			var cell = grid[x][y];
+			if (cell.hint) {
+				cell.hint = false;
+				updateHTML(x, y);
+			}
 		}
 	}
 }
@@ -522,11 +533,13 @@ function setOptions() {
 	localStorage.setItem("minesweeper-size", document.querySelector("#size").value);
 	localStorage.setItem("minesweeper-difficulty", document.querySelector("#difficulty").value);
 	localStorage.setItem("minesweeper-oldfashioned", document.querySelector("#oldfashioned").checked);
+	localStorage.setItem("minesweeper-hints", document.querySelector("#hints").checked);
 }
 function applyOptions() {
 	document.body.id = "size-" + localStorage.getItem("minesweeper-size");
 	selectedDifficulty = DIFFICULTIES[localStorage.getItem("minesweeper-difficulty")];
 	oldFashioned = (localStorage.getItem("minesweeper-oldfashioned") === "true");
+	hints = (localStorage.getItem("minesweeper-hints") === "true");
 }
 
 // MAIN
@@ -545,6 +558,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		document.querySelector("#size").value = localStorage.getItem("minesweeper-size");
 		document.querySelector("#difficulty").value = localStorage.getItem("minesweeper-difficulty");
 		document.querySelector("#oldfashioned").checked = (localStorage.getItem("minesweeper-oldfashioned") === "true");
+		document.querySelector("#hints").checked = (localStorage.getItem("minesweeper-hints") === "true");
 	}
 	else {
 		setOptions();
@@ -561,6 +575,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		newGame();
 	});
 	document.querySelector("#oldfashioned").addEventListener("change", function(event) {
+		setOptions();
+		applyOptions();
+	});
+	document.querySelector("#hints").addEventListener("change", function(event) {
+		clearAllHints();
 		setOptions();
 		applyOptions();
 	});

@@ -26,12 +26,16 @@ $backgroundcolor: #bdbdbd;
 			.item-container {
 				flex-grow: 1;
 				text-align: center;
+				.extra-margin {
+					margin: 2px;
+				}
 			}
 		}
 	}
 }
 #numBombs, #clock {
 	color: red;
+	font-weight: bold;
 	font-family: monospace;
 }
 #smiley {	
@@ -52,6 +56,10 @@ $backgroundcolor: #bdbdbd;
 		border-bottom: 0;
 		border-right: 0;
 	}
+}
+#checkboxes {
+	display: flex;
+	flex-direction: column;
 }
 #xyzzy {
 	position: fixed;
@@ -118,7 +126,7 @@ $backgroundcolor: #bdbdbd;
 			border-bottom: 2px solid $bordercolor;
 			border-right: 2px solid $bordercolor;
 		}
-		&[data-hover="true"][data-flagged="false"][data-hint="false"] {
+		&[data-hover="true"][data-flagged="false"] {
 			border-top: 1px solid $bordercolor;
 			border-left: 1px solid $bordercolor;
 			border-bottom: 0;
