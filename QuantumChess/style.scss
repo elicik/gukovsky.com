@@ -1,0 +1,32 @@
+$white: #dd0000;
+$black: #333333;
+
+#container {
+	text-align: center;
+	padding: 24px;
+}
+
+#board {
+	width: 100%;
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+.square-55d63 {
+	transition: background-color 0.3s;
+}
+
+#turn {
+	color: white;
+	border-radius: 3px;
+	padding: 3px 7px;
+	&.white {
+		background-color: $white;
+		/*color: black;*/
+	}
+
+	&.black {
+		background-color: $black;
+	}
+}
+
