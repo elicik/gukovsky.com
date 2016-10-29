@@ -228,9 +228,9 @@ function newRound() {
 	level = (level > MAX_LEVEL) ? MAX_LEVEL : level;
 	score = (score > MAX_SCORE) ? MAX_SCORE : score;
 	
-	levelText.setText("Level\n" + level);
-	clearedLinesText.setText("Clear\n" + clearedLines);
-	scoreText.setText("Score\n" + score);
+	levelText.text = "Level\n" + level;
+	clearedLinesText.text = "Clear\n" + clearedLines;
+	scoreText.text = "Score\n" + score;
 
 	// set nextPicture to a picture of the next piece
 	container.removeChild(nextPicture);
