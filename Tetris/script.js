@@ -209,32 +209,35 @@ var score = 0;
 var nextPicture = new PIXI.Sprite();
 container.addChild(nextPicture);
 
-var dropRequest; // needed in order to cancel drop()
+// needed in order to cancel drop() or render()
+var dropRequest;
+var renderRequest;
 
 /**
  * EVENT LISTENERS
  */
 
 window.addEventListener("keydown", function(e) {
-	if (e.keyCode === 32) { // space bar
+	var key = e.which || e.keyCode;
+	if (e.shiftKey) { // shift
 		frameCounter = 0;
 	}
-	if (e.keyCode === 37) { // left
+	if (key === 37) { // left
 		move("left");
 	}
-	if (e.keyCode === 38) { // up
+	if (key === 38) { // up
 		rotate("counterClockwise");
 	}
-	if (e.keyCode === 39) { // right
+	if (key === 39) { // right
 		move("right");
 	}
-	if (e.keyCode === 40) { // down
+	if (key === 40) { // down
 		bottom();
 	}
-	if (e.keyCode === 90) { // Z
+	if (key === 90) { // Z
 		rotate("clockwise");
 	}
-	if (e.keyCode === 88) { // X
+	if (key === 88) { // X
 		rotate("counterClockwise");
 	}
 });
@@ -324,8 +327,14 @@ function newRound() {
 	// check for lose
 	var points = block.rotations[rotation];
 	for (var i = 0; i < points.length; i++) {
-		if (points[i][1] >= 0 && grid[points[i][0]][points[i][1]].exists) {
+		var x = points[i][0];
+		var y = points[i][1];
+		if (y < 0) {
+			y = 0;
+		}
+		if (grid[x][y].exists) {
 			// lose();
+			cancelAnimationFrame(renderRequest);
 			alert("Praveen");
 			return;
 		}
@@ -363,8 +372,10 @@ function drop() {
 			for (var i = 0; i < points.length; i++) {
 				var x = points[i][0] + offsetX;
 				var y = points[i][1] + offsetY;
-				grid[x][y].exists = true;
-				grid[x][y].color = block.color;
+				if (x >= 0 && y >= 0) {
+					grid[x][y].exists = true;
+					grid[x][y].color = block.color;
+				}
 			}
 			newRound();
 			return; // end drop()
@@ -384,8 +395,10 @@ function bottom() {
 	for (var i = 0; i < points.length; i++) {
 		var x = points[i][0] + offsetX;
 		var y = points[i][1] + offsetY;
-		grid[x][y].exists = true;
-		grid[x][y].color = block.color;
+		if (x >= 0 && y >= 0) {
+			grid[x][y].exists = true;
+			grid[x][y].color = block.color;
+		}
 	}
 	newRound();
 }
@@ -487,9 +500,8 @@ function render() {
 		container.addChild(blockSprites[i]);
 	}
 
-
 	renderer.render(container);
-	requestAnimationFrame(render);
+	renderRequest = requestAnimationFrame(render);
 }
 
 /**
