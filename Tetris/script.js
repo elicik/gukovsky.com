@@ -186,6 +186,7 @@ for (var x = 0; x < GRID_WIDTH; x++) {
 
 var offsetX = 0;
 var offsetY = 0;
+var offsetGhost = 0;
 
 /**
  * MISC. VARIABLES
@@ -197,7 +198,9 @@ var frameCounter = 1;
 var block = getRandomBlock();
 var nextBlock = getRandomBlock();
 var rotation = 0;
+
 var blockSprites = [];
+var ghostSprites = [];
 
 var level = 0;
 var clearedLines = 0;
@@ -260,27 +263,20 @@ function validSpot(offX, offY) {
 }
 
 function clearLine(line) {
-	var newgrid = [];
 	for (var x = 0; x < GRID_WIDTH; x++) {
-		newgrid[x] = [];
-
-		// lower all lines about the line to clear
-		for (var y = line; y >= 0; y--) {
-			newgrid[x][y + 1] = grid[x][y];
-		}
-
-		// keep other lines the same
-		for (var y = line + 1; y < GRID_HEIGHT; y++) {
-			newgrid[x][y] = grid[x][y];
+		// remove all sprites from line
+		container.removeChild(grid[x][line].sprite);
+		// lower all lines above the line
+		for (var y = line; y > 0; y--) {
+			grid[x][y] = grid[x][y-1];
 		}
 	}
 	// clear top row
 	for (var i = 0; i < GRID_WIDTH; i++) {
-		newgrid[i][0].color = null;
-		newgrid[i][0].exists = false;
-		newgrid[i][0].sprite = null;
+		grid[i][0].color = null;
+		grid[i][0].exists = false;
+		grid[i][0].sprite = null;
 	}
-	grid = newgrid;
 
 }
 function lineCanBeCleared(line) {
@@ -290,6 +286,12 @@ function lineCanBeCleared(line) {
 		}
 	}
 	return true;
+}
+function calculateOffsetGhost() {
+	offsetGhost = offsetY;
+	while (validSpot(offsetX, offsetGhost+1)) {
+		offsetGhost++;
+	}
 }
 
 /**
@@ -463,18 +465,28 @@ function render() {
 			}
 		}
 	}
+	calculateOffsetGhost();
 	for (var i = 0; i < blockSprites.length; i++) {
 		container.removeChild(blockSprites[i]);
+		container.removeChild(ghostSprites[i]);
 	}
 	var points = block.rotations[rotation];
 	for (var i = 0; i < points.length; i++) {
 		var x = points[i][0] + offsetX;
+		var ghostY = points[i][1] + offsetGhost;
+		ghostSprites[i] = PIXI.Sprite.fromImage("blocks/grey.png");
+		ghostSprites[i].x = x * SPRITE_WIDTH + SCOREBOARD_WIDTH;
+		ghostSprites[i].y = ghostY * SPRITE_WIDTH;
+		container.addChild(ghostSprites[i]);
+
+		// add ghosts before blocks in order for the ghost not to cover the block
 		var y = points[i][1] + offsetY;
 		blockSprites[i] = PIXI.Sprite.fromImage("blocks/" + block.color + ".png");
 		blockSprites[i].x = x * SPRITE_WIDTH + SCOREBOARD_WIDTH;
 		blockSprites[i].y = y * SPRITE_WIDTH;
 		container.addChild(blockSprites[i]);
 	}
+
 
 	renderer.render(container);
 	requestAnimationFrame(render);
