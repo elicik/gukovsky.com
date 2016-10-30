@@ -15,20 +15,10 @@ var MAX_LEVEL = 20;
 var MAX_SCORE = 999999;
 
 // CONSTANT-BASED VALUES
-var POSSIBLE_POINTS = [
-	[[GRID_WIDTH / 2 - 1, 0], [GRID_WIDTH / 2, 0], [GRID_WIDTH / 2 + 1, 0], [GRID_WIDTH / 2 + 1, 1]], // J
-	[[GRID_WIDTH / 2 - 1, 0], [GRID_WIDTH / 2, 0], [GRID_WIDTH / 2 + 1, 0], [GRID_WIDTH / 2, 1]],     // T
-	[[GRID_WIDTH / 2 - 1, 0], [GRID_WIDTH / 2, 0], [GRID_WIDTH / 2 + 1, 0], [GRID_WIDTH / 2 - 1, 1]], // L
-	[[GRID_WIDTH / 2 - 1, 1], [GRID_WIDTH / 2, 1], [GRID_WIDTH / 2 + 1, 0], [GRID_WIDTH / 2, 0]],     // S
-	[[GRID_WIDTH / 2 - 1, 0], [GRID_WIDTH / 2, 0], [GRID_WIDTH / 2 + 1, 0], [GRID_WIDTH / 2 + 2, 0]], // I
-	[[GRID_WIDTH / 2 + 1, 0], [GRID_WIDTH / 2, 0], [GRID_WIDTH / 2 + 1, 1], [GRID_WIDTH / 2, 1]],     // O
-	[[GRID_WIDTH / 2 - 1, 0], [GRID_WIDTH / 2, 0], [GRID_WIDTH / 2 + 1, 1], [GRID_WIDTH / 2, 1]]      // Z
-];
-
-var BLOCK_TYPE = ["J","T","L","S","I","O","Z"];
 var BLOCKS = {
 	"J": {
-		"color": "#0000FF",
+		"type": "J",
+		"color": "blue",
 		"rotations": [
 			[[3,-2],[3,-1],[4,-1],[5,-1]],
 			[[4,-2],[5,-2],[4,-1],[4, 0]],
@@ -43,7 +33,8 @@ var BLOCKS = {
 		]
 	},
 	"T": {
-		"color": "#800080",
+		"type": "T",
+		"color": "purple",
 		"rotations": [
 			[[4,-2],[3,-1],[4,-1],[5,-1]],
 			[[4,-2],[4,-1],[5,-1],[4, 0]],
@@ -58,7 +49,8 @@ var BLOCKS = {
 		]
 	},
 	"L": {
-		"color": "#FFA500",
+		"type": "L",
+		"color": "orange",
 		"rotations": [
 			[[5,-2],[3,-1],[4,-1],[5,-1]],
 			[[4,-2],[4,-1],[4, 0],[5, 0]],
@@ -73,7 +65,8 @@ var BLOCKS = {
 		]
 	},
 	"S": {
-		"color": "#80FF00",
+		"type": "S",
+		"color": "green",
 		"rotations": [
 			[[4,-2],[5,-2],[3,-1],[4,-1]],
 			[[4,-2],[4,-1],[5,-1],[5, 0]],
@@ -88,7 +81,8 @@ var BLOCKS = {
 		]
 	},
 	"I": {
-		"color": "#00FFFF",
+		"type": "I",
+		"color": "cyan",
 		"rotations": [
 			[[3,-1],[4,-1],[5,-1],[6,-1]],
 			[[5,-2],[5,-1],[5, 0],[5, 1]],
@@ -103,7 +97,8 @@ var BLOCKS = {
 		]
 	},
 	"O": {
-		"color": "#FFFF00",
+		"type": "O",
+		"color": "yellow",
 		"rotations": [
 			[[4,-2],[5,-2],[4,-1],[5,-1]],
 			[[4,-2],[5,-2],[4,-1],[5,-1]],
@@ -118,7 +113,8 @@ var BLOCKS = {
 		]
 	},
 	"Z": {
-		"color": "#FF0000",
+		"type": "Z",
+		"color": "red",
 		"rotations": [
 			[[3,-2],[4,-2],[4,-1],[5,-1]],
 			[[5,-2],[4,-1],[5,-1],[4, 0]],
@@ -133,8 +129,6 @@ var BLOCKS = {
 		]
 	}
 }
-
-console.log(BLOCKS);
 
 var SCOREBOARD_WIDTH = SPRITE_WIDTH * 5;
 
@@ -158,18 +152,18 @@ scoreboardBackground.drawRect(0, 0, SCOREBOARD_WIDTH, CANVAS_HEIGHT);
 scoreboardBackground.endFill();
 container.addChild(scoreboardBackground);
 
-var levelText = new PIXI.Text("Level\n0", {font:"26px Monospace", fill: "black"});
+var levelText = new PIXI.Text("Level\n0", {fill: "black"});
 container.addChild(levelText);
 
-var clearedLinesText = new PIXI.Text("Clear\n0", {font:"26px Monospace", fill: "black"});
+var clearedLinesText = new PIXI.Text("Clear\n0", {fill: "black"});
 clearedLinesText.position.y = Math.floor((CANVAS_HEIGHT - 56) / 3);
 container.addChild(clearedLinesText);
 
-var nextText = new PIXI.Text("Next", {font:"26px Monospace", fill: "black"});
+var nextText = new PIXI.Text("Next", {fill: "black"});
 nextText.position.y = Math.floor((CANVAS_HEIGHT - 56) * 2 / 3);
 container.addChild(nextText);
 
-var scoreText = new PIXI.Text("Score\n0", {font:"26px Monospace", fill: "black"});
+var scoreText = new PIXI.Text("Score\n0", {fill: "black"});
 scoreText.position.y = CANVAS_HEIGHT - 56;
 container.addChild(scoreText);
 
@@ -177,16 +171,21 @@ container.addChild(scoreText);
  * GRID
  */
 
+// contains a number, the color
 var grid = [];
 for (var x = 0; x < GRID_WIDTH; x++) {
 	grid[x] = [];
 	for (var y = 0; y < GRID_HEIGHT; y++) {
 		grid[x][y] = {
 			color: null,
+			exists: false,
 			sprite: null
 		};
 	}
 }
+
+var offsetX = 0;
+var offsetY = 0;
 
 /**
  * MISC. VARIABLES
@@ -195,7 +194,10 @@ for (var x = 0; x < GRID_WIDTH; x++) {
 var paused = false;
 
 var frameCounter = 1;
-var color, points, nextColor, nextPoints;
+var block = getRandomBlock();
+var nextBlock = getRandomBlock();
+var rotation = 0;
+var blockSprites = [];
 
 var level = 0;
 var clearedLines = 0;
@@ -239,9 +241,18 @@ window.addEventListener("keydown", function(e) {
  */
 
 // checks left side, right side, bottom, and other pieces
-function validSpot(newpoints) {
+function getRandomBlock() {
+    var keys = Object.keys(BLOCKS)
+    var index = Math.floor(Math.random() * keys.length);
+    return JSON.parse(JSON.stringify(BLOCKS[keys[index]]));
+}
+
+function validSpot(offX, offY) {
+	var points = block.rotations[rotation];
 	for (var i = 0; i < points.length; i++) {
-		if (newpoints[i][0] < 0 || newpoints[i][0] >= GRID_WIDTH || newpoints[i][1] >= GRID_HEIGHT || grid[newpoints[i][0]][newpoints[i][1]] !== undefined) {
+		var newX = points[i][0] + offX;
+		var newY = points[i][1] + offY;
+		if (newX < 0 || newX >= GRID_WIDTH || newY >= GRID_HEIGHT || (newY >= 0 && grid[newX][newY].exists)) {
 			return false;
 		}
 	}
@@ -265,14 +276,16 @@ function clearLine(line) {
 	}
 	// clear top row
 	for (var i = 0; i < GRID_WIDTH; i++) {
-		newgrid[i][0] = undefined;
+		newgrid[i][0].color = null;
+		newgrid[i][0].exists = false;
+		newgrid[i][0].sprite = null;
 	}
 	grid = newgrid;
 
 }
 function lineCanBeCleared(line) {
 	for (var i = 0; i < GRID_WIDTH; i++) {
-		if (typeof grid[i][line] === "undefined") {
+		if (!grid[i][line].exists) {
 			return false;
 		}
 	}
@@ -301,27 +314,20 @@ function newRound() {
 		}
 	}
 
-	color = nextColor;
-	points = nextPoints.map(function(arr) { // set points to nextPoints w/o reference
-		return arr.slice();
-	});
-	nextColor = Math.floor(Math.random() * 7);
-	nextPoints = POSSIBLE_POINTS[nextColor];
+	block = nextBlock;
+	nextBlock = getRandomBlock();
+	offsetX = 0;
+	offsetY = 0;
 
 	// check for lose
+	var points = block.rotations[rotation];
 	for (var i = 0; i < points.length; i++) {
-		if (typeof grid[points[i][0]][points[i][1]] !== "undefined") {
+		if (points[i][1] >= 0 && grid[points[i][0]][points[i][1]].exists) {
 			// lose();
-			alert("You lose!");
+			alert("Praveen");
 			return;
 		}
 	}
-
-	// put new piece in the grid
-	for (var i = 0; i < points.length; i++) {
-		grid[points[i][0]][points[i][1]] = color;
-	}
-
 
 	level = Math.floor(clearedLines / 10); // based on NES version
 	score += POINTS_FOR_LINE[linesClearedThisRound] * (level + 1);
@@ -336,7 +342,7 @@ function newRound() {
 
 	// set nextPicture to a picture of the next piece
 	container.removeChild(nextPicture);
-	nextPicture = PIXI.Sprite.fromImage("tetrominos/" + nextColor.toString() + ".png");
+	nextPicture = PIXI.Sprite.fromImage("tetrominos/" + nextBlock.type + ".png");
 	nextPicture.x = SPRITE_WIDTH / 2;
 	nextPicture.y = Math.floor(CANVAS_HEIGHT * 2 / 3);
 	container.addChild(nextPicture);
@@ -347,216 +353,85 @@ function newRound() {
 
 function drop() {
 	if (frameCounter === 0) {
-		var newpoints = [];
-
-		// set all of the points to blank
-		for (var i = 0; i < points.length; i++) {
-			grid[points[i][0]][points[i][1]] = undefined;
-		}
-
-		// create newpoints, one block lower
-		for (var i = 0; i < points.length; i++) {
-			newpoints[i] = [];
-			newpoints[i][0] = points[i][0];
-			newpoints[i][1] = points[i][1] + 1;
-		}
-
-		// check for collision, and stop moving if collision detected
-		if (validSpot(newpoints)) {
-			for (var i = 0; i < points.length; i++) {
-				grid[newpoints[i][0]][newpoints[i][1]] = color;
-			}
-			points = newpoints; // set points correctly
+		if (validSpot(offsetX, offsetY+1)) {
+			offsetY++;
 		}
 		else {
+			var points = block.rotations[rotation];
 			for (var i = 0; i < points.length; i++) {
-				grid[points[i][0]][points[i][1]] = color;
+				var x = points[i][0] + offsetX;
+				var y = points[i][1] + offsetY;
+				grid[x][y].exists = true;
+				grid[x][y].color = block.color;
 			}
 			newRound();
 			return; // end drop()
 		}
 	}
-	frameCounter = (frameCounter + 1) % (FRAMES_PER_LEVEL[level]);
+	frameCounter = (frameCounter + 1) % FRAMES_PER_LEVEL[level];
 	dropRequest = requestAnimationFrame(drop);
 }
 
 // logic is basically the same as drop(), but uses a do-while instead of requestAnimationFrame so it happens instantly
 function bottom() {
 	cancelAnimationFrame(dropRequest);
-	var newpoints = [];
-
-	// set all of the points to blank
-	for (var i = 0; i < points.length; i++) {
-		grid[points[i][0]][points[i][1]] = undefined;
+	while (validSpot(offsetX, offsetY+1)) {
+		offsetY++;
 	}
-
-	// create newpoints, one block lower
+	var points = block.rotations[rotation];
 	for (var i = 0; i < points.length; i++) {
-		newpoints[i] = [];
-		newpoints[i][0] = points[i][0];
-		newpoints[i][1] = points[i][1] + 1;
-	}
-
-	// check for collision, and stop moving if collision detected
-	while (validSpot(newpoints)) {
-		// create newpoints, one block lower
-		for (var i = 0; i < points.length; i++) {
-			newpoints[i][1]++;
-		}
-	}
-
-	// set points correctly
-	for (var i = 0; i < points.length; i++) {
-		points[i][0] = newpoints[i][0];
-		points[i][1] = newpoints[i][1] - 1;
-		grid[points[i][0]][points[i][1]] = color;
+		var x = points[i][0] + offsetX;
+		var y = points[i][1] + offsetY;
+		grid[x][y].exists = true;
+		grid[x][y].color = block.color;
 	}
 	newRound();
 }
 
 
 function move(direction) {
-	var newpoints = [];
+	var offX = offsetX;
 
-	// set all of the points to blank
-	for (var i = 0; i < points.length; i++) {
-		grid[points[i][0]][points[i][1]] = undefined;
+	if (direction === "right") {
+		offX++;
+	}
+	if (direction === "left") {
+		offX--;
 	}
 
-	// create newpoints, one block to the side
-	for (var i = 0; i < points.length; i++) {
-		newpoints[i] = [];
-		newpoints[i][0] = points[i][0];
-		newpoints[i][1] = points[i][1];
-		if (direction === "right") {
-			newpoints[i][0]++;
-		}
-		if (direction === "left") {
-			newpoints[i][0]--;
-		}
-	}
-
-	// check for collision, and stop moving if collision detected
-	if (validSpot(newpoints)) {
-		for (var i = 0; i < points.length; i++) {
-			grid[newpoints[i][0]][newpoints[i][1]] = color;
-		}
-		points = newpoints; // set points correctly
-	}
-	else {
-		for (var i = 0; i < points.length; i++) {
-			grid[points[i][0]][points[i][1]] = color;
-		}
+	if (validSpot(offX, offsetY)) {
+		offsetX = offX;
 	}
 }
 
 
-// Rotation follows Nintendo Rotation System (NES version)
+// Rotation follows Akira Super Rotation System
 function rotate(direction) {
-	var newpoints = [];
-	// set all of the points to blank
-	for (var i = 0; i < points.length; i++) {
-		grid[points[i][0]][points[i][1]] = undefined;
-	}
-
-	var minX = GRID_WIDTH;
-	var maxX = 0;
-	var minY = GRID_HEIGHT;
-	var maxY = 0;
-
-	// calculate mins/maxes
-	for (var i = 0; i < points.length; i++) {
-		if (points[i][0] > maxX) {
-			maxX = points[i][0];
-		}
-		if (points[i][0] < minX) {
-			minX = points[i][0];
-		}
-		if (points[i][1] > maxY) {
-			maxY = points[i][1];
-		}
-		if (points[i][1] < minY) {
-			minY = points[i][1];
-		}
-	}
-
-	var shiftX = 0;
-	var shiftY = 0;
-
-	/*
-	switch (BLOCK_TYPE[color]) {
-		case "J":
-			shiftX = 0;
-			shiftY = 0;
-			break;
-		case "T":
-			shiftX = 0;
-			shiftY = 0;
-			break;
-		case "L":
-			shiftX = 0;
-			shiftY = 0;
-			break;
-		case "S":
-			shiftX = 0;
-			shiftY = 0;
-			break;
-		case "I":
-			if (maxX > maxY) {
-				shiftX = 2;
-				shiftY = -2;
-			}
-			if (maxY > maxX) {
-				shiftX = -2;
-				shiftY = 2;
-			}
-			break;
-		case "O":
-			shiftX = 0;
-			shiftY = 0;
-			break;
-		case "Z":
-			shiftX = 0;
-			shiftY = 0;
-			break;
-	}
-	*/
-
-	// rotation logic
+	var multiplier;
+	var originalRotation = rotation;
 	if (direction === "counterClockwise") {
-		for (var i = 0; i < points.length; i++) {
-			newpoints[i] = [];
-			var pointX = points[i][0] - minX;
-			var pointY = points[i][1] - minY;
-			newpoints[i][0] = pointY;
-			newpoints[i][1] = -pointX + maxX - minX;
-			newpoints[i][0] += minX + shiftX;
-			newpoints[i][1] += minY + shiftY;
-		}
+		rotation = (rotation - 1 + 4) % 4;
+		multiplier = -1;
 	}
 	if (direction === "clockwise") {
-		for (var i = 0; i < points.length; i++) {
-			newpoints[i] = [];
-			var pointX = points[i][0] - minX;
-			var pointY = points[i][1] - minY;
-			newpoints[i][0] = -pointY + maxY - minY;
-			newpoints[i][1] = pointX;
-			newpoints[i][0] += minX + shiftX;
-			newpoints[i][1] += minY + shiftY;
-		}
+		rotation = (rotation + 1) % 4;
+		multiplier = 1;
 	}
 
-	// check for collision, and stop moving if collision detected
-	if (validSpot(newpoints)) {
-		for (var i = 0; i < points.length; i++) {
-			grid[newpoints[i][0]][newpoints[i][1]] = color;
+	// check wall kicks
+	var validSpotFound = false;
+	for (var i = 0; i < block.wallKickTests[rotation].length; i++) {
+		var offX = offsetX + block.wallKickTests[rotation][i][0] * multiplier;
+		var offY = offsetY + block.wallKickTests[rotation][i][1] * multiplier;
+		if (validSpot(offX, offY)) {
+			offsetX = offX;
+			offsetY = offY;
+			validSpotFound = true;
+			break;
 		}
-		points = newpoints; // set points correctly
 	}
-	else {
-		for (var i = 0; i < points.length; i++) {
-			grid[points[i][0]][points[i][1]] = color;
-		}
+	if (!validSpotFound) {
+		rotation = originalRotation;
 	}
 }
 
@@ -576,16 +451,29 @@ function pause() {
 function render() {
 	for (var x = 0; x < GRID_WIDTH; x++) {
 		for (var y = 0; y < GRID_HEIGHT; y++) {
-			if (spriteGrid[x][y]) {
-				container.removeChild(spriteGrid[x][y]);
+			if (grid[x][y].sprite !== null) {
+				container.removeChild(grid[x][y].sprite);
+				grid[x][y].sprite = null;
 			}
-			if (typeof grid[x][y] !== "undefined") {
-				spriteGrid[x][y] = PIXI.Sprite.fromImage("blocks/" + grid[x][y].toString() + ".png");
-				spriteGrid[x][y].x = x * SPRITE_WIDTH + SCOREBOARD_WIDTH;
-				spriteGrid[x][y].y = y * SPRITE_WIDTH;
-				container.addChild(spriteGrid[x][y]);
+			if (grid[x][y].exists) {
+				grid[x][y].sprite = PIXI.Sprite.fromImage("blocks/" + grid[x][y].color + ".png");
+				grid[x][y].sprite.x = x * SPRITE_WIDTH + SCOREBOARD_WIDTH;
+				grid[x][y].sprite.y = y * SPRITE_WIDTH;
+				container.addChild(grid[x][y].sprite);
 			}
 		}
+	}
+	for (var i = 0; i < blockSprites.length; i++) {
+		container.removeChild(blockSprites[i]);
+	}
+	var points = block.rotations[rotation];
+	for (var i = 0; i < points.length; i++) {
+		var x = points[i][0] + offsetX;
+		var y = points[i][1] + offsetY;
+		blockSprites[i] = PIXI.Sprite.fromImage("blocks/" + block.color + ".png");
+		blockSprites[i].x = x * SPRITE_WIDTH + SCOREBOARD_WIDTH;
+		blockSprites[i].y = y * SPRITE_WIDTH;
+		container.addChild(blockSprites[i]);
 	}
 
 	renderer.render(container);
@@ -596,14 +484,8 @@ function render() {
  * RUN!
  */
 
-// need to set nextColor and nextPoints initially because newRound() relies on them
-nextColor = Math.floor(Math.random() * 7);
-nextPoints = POSSIBLE_POINTS[nextColor];
-
-
 document.addEventListener("DOMContentLoaded", function(event) {
 	document.querySelector("#container").insertBefore(renderer.view, document.querySelector("#container").lastChild);
-	render();
 	render();
 	newRound();
 
