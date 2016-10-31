@@ -236,7 +236,7 @@ var actions = [];
 
 window.addEventListener("keydown", function(e) {
 	var key = e.which || e.keyCode;
-	if (key === 80 || key === 13) { // P and enter
+	if (key === 80) { // P
 		paused = !paused;
 	}
 	if (!paused) {
