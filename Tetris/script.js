@@ -161,13 +161,18 @@ container.addChild(levelText);
 
 var clearedLinesText = new PIXI.Text("Clear\n0", {fill: "black"});
 clearedLinesText.x = MARGIN;
-clearedLinesText.y = Math.floor((CANVAS_HEIGHT - 56) / 3);
+clearedLinesText.y = Math.floor((CANVAS_HEIGHT - 56) / 4);
 container.addChild(clearedLinesText);
 
 var nextText = new PIXI.Text("Next", {fill: "black"});
 nextText.x = MARGIN;
-nextText.y = Math.floor((CANVAS_HEIGHT - 56) * 2 / 3);
+nextText.y = Math.floor((CANVAS_HEIGHT - 56) / 2);
 container.addChild(nextText);
+
+var highscoreText = new PIXI.Text("Hi Score\n0", {fill: "black"});
+highscoreText.x = MARGIN;
+highscoreText.y = Math.floor((CANVAS_HEIGHT - 56) * 3 / 4);
+container.addChild(highscoreText);
 
 var scoreText = new PIXI.Text("Score\n0", {fill: "black"});
 scoreText.x = MARGIN;
@@ -334,8 +339,7 @@ function calculateOffsetGhost() {
  * FUNCTIONS
  *
  * newRound() is run at the beginning of each round
- * at the end it calls drop()
- * drop() ends, after movement like move(), rotate(), and bottom() are run
+ * drop()/render() runs, movement like move(), rotate(), and bottom() is also
  * newRound() is called again, until the player loses
  *
  * All functions modify grid, and everything sprite related is handled by render()
@@ -420,12 +424,13 @@ function newRound() {
 	levelText.text = "Level\n" + level;
 	clearedLinesText.text = "Clear\n" + clearedLines;
 	scoreText.text = "Score\n" + score;
+	highscoreText.text = "Hi Score\n" + highscore;
 
 	// set nextPicture to a picture of the next piece
 	container.removeChild(nextPicture);
 	nextPicture = PIXI.Sprite.fromImage("tetrominos/" + nextBlock.type + ".png");
 	nextPicture.x = SPRITE_WIDTH / 2;
-	nextPicture.y = Math.floor(CANVAS_HEIGHT * 2 / 3);
+	nextPicture.y = Math.floor(CANVAS_HEIGHT / 2 + SPRITE_WIDTH / 2);
 	container.addChild(nextPicture);
 
 	frameCounter = 1;
@@ -533,15 +538,17 @@ function lose() {
 			newGame();
 		});
 	}
-	swal({
-		title: "Game Over",
-		text: "You got a score of " + score + ".",
-		type: "info",
-		confirmButtonText: "New Game",
-		allowEscapeKey: false
-	}, function() {
-		newGame();
-	})
+	else {
+		swal({
+			title: "Game Over",
+			text: "You got a score of " + score + ".",
+			type: "info",
+			confirmButtonText: "New Game",
+			allowEscapeKey: false
+		}, function() {
+			newGame();
+		});
+	}
 }
 
 /**
