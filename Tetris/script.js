@@ -147,7 +147,7 @@ var renderer = PIXI.autoDetectRenderer(CANVAS_WIDTH, CANVAS_HEIGHT);
  */
 
 var scoreboardBackground = new PIXI.Graphics();
-scoreboardBackground.beginFill(0x7E7215);
+scoreboardBackground.beginFill(0xBBAADD);
 scoreboardBackground.drawRect(0, 0, SCOREBOARD_WIDTH, CANVAS_HEIGHT);
 scoreboardBackground.endFill();
 container.addChild(scoreboardBackground);
@@ -206,6 +206,8 @@ var level = 0;
 var clearedLines = 0;
 var score = 0;
 
+var fastDrop = false;
+
 var nextPicture = new PIXI.Sprite();
 container.addChild(nextPicture);
 
@@ -217,27 +219,40 @@ var actions = [];
  */
 
 window.addEventListener("keydown", function(e) {
-	if (paused) {
-		return;
-	}
 	var key = e.which || e.keyCode;
-	if (key === 37) { // left
-		actions.push(wrapFunction(move, this, ["left"]));
+	if (key === 80 || key === 13) { // P and enter
+		paused = !paused;
 	}
-	if (key === 38) { // up
-		actions.push(wrapFunction(rotate, this, ["counterClockwise"]));
+	if (!paused) {
+		switch (key) {
+			case 37: // left
+				actions.push(wrapFunction(move, this, ["left"]));
+				break;
+			case 39: // right
+				actions.push(wrapFunction(move, this, ["right"]));
+				break;
+			case 40: // down
+				actions.push(wrapFunction(bottom, this, []));
+				break;
+			case 32: // space
+				fastDrop = true;
+				break;
+			case 38: // up
+			case 90: // Z
+				actions.push(wrapFunction(rotate, this, ["clockwise"]));
+				break;
+			case 88: // X
+				actions.push(wrapFunction(rotate, this, ["counterClockwise"]));
+				break;
+			default:
+				break;
+		}
 	}
-	if (key === 39) { // right
-		actions.push(wrapFunction(move, this, ["right"]));
-	}
-	if (key === 40) { // down
-		actions.push(wrapFunction(bottom, this, []));
-	}
-	if (key === 90) { // Z
-		actions.push(wrapFunction(rotate, this, ["clockwise"]));
-	}
-	if (key === 88) { // X
-		actions.push(wrapFunction(rotate, this, ["counterClockwise"]));
+});
+window.addEventListener("keyup", function(e) {
+	var key = e.which || e.keyCode;
+	if (key === 32) { // space
+		fastDrop = false;
 	}
 });
 
@@ -340,9 +355,7 @@ function newRound() {
 			y = 0;
 		}
 		if (grid[x][y].exists) {
-			// lose();
-			paused = true;
-			alert("Taha");
+			lose();
 			return;
 		}
 	}
@@ -369,7 +382,7 @@ function newRound() {
 }
 
 function drop() {
-	if (frameCounter === 0) {
+	if (frameCounter === 0 || fastDrop) {
 		if (validSpot(offsetX, offsetY+1)) {
 			offsetY++;
 		}
@@ -454,18 +467,24 @@ function rotate(direction) {
 	}
 }
 
-function pause() {
-	paused = !paused;
+function lose() {
+	paused = true;
+	swal({
+		title: "Congrats!",
+		text: "You got a score of " + score + "!",
+		type: "success"
+	});
 }
+
 /**
  * RENDER
  */
 
 function render() {
-	while (actions.length > 0) {
-		(actions.shift())();
-	}
 	if (!paused) {
+		while (actions.length > 0) {
+			(actions.shift())();
+		}
 		drop();
 	}
 	for (var x = 0; x < GRID_WIDTH; x++) {

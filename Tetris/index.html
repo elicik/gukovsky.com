@@ -12,6 +12,7 @@
 		<meta property="og:description" content="Tetris made with pixi.js">
 		<link rel="stylesheet" type="text/css" href="../bower_components/normalize-css/normalize.css">
 		<link rel="stylesheet" type="text/css" href="../global.css">
+		<link rel="stylesheet" type="text/css" href="../bower_components/sweetalert/dist/sweetalert.css">
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 		<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
@@ -20,15 +21,12 @@
 		<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#000000">
 		<meta name="theme-color" content="#ffffff">
 		<script src="../bower_components/pixi.js/bin/pixi.js"></script>
+		<script src="../bower_components/sweetalert/dist/sweetalert.min.js"></script>
 		<script src="script.js"></script>
 	</head>
 	<body>
 		<div id="container">
-			<button onclick="pause()">Pause</button>
-			<div>
-				<p>Work in progress, several things broken, including clear lines :(</p>
-				<p>Future ideas: "Hold" tetromino, Fix pause button/hold space thing</p>
-			</div>
+			<p>Controls: Z/Up to rotate clockwise, X to rotate counterclockwise, Left/Right to shift, Space to drop quickly, Down to drop all the way, and P to pause</p>
 		</div>
 		<div id="return-to-home"><a href="../">Eli Gukovsky</a></div>
 	</body>
