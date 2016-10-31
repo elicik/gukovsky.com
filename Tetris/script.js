@@ -14,6 +14,8 @@ var POINTS_FOR_LINE = [0, 40, 100, 300, 1200];
 var MAX_LEVEL = 20;
 var MAX_SCORE = 999999;
 
+var MARGIN = 8;
+
 // CONSTANT-BASED VALUES
 var BLOCKS = {
 	"J": {
@@ -153,18 +155,23 @@ scoreboardBackground.endFill();
 container.addChild(scoreboardBackground);
 
 var levelText = new PIXI.Text("Level\n0", {fill: "black"});
+levelText.x = MARGIN;
+levelText.y = MARGIN;
 container.addChild(levelText);
 
 var clearedLinesText = new PIXI.Text("Clear\n0", {fill: "black"});
-clearedLinesText.position.y = Math.floor((CANVAS_HEIGHT - 56) / 3);
+clearedLinesText.x = MARGIN;
+clearedLinesText.y = Math.floor((CANVAS_HEIGHT - 56) / 3);
 container.addChild(clearedLinesText);
 
 var nextText = new PIXI.Text("Next", {fill: "black"});
-nextText.position.y = Math.floor((CANVAS_HEIGHT - 56) * 2 / 3);
+nextText.x = MARGIN;
+nextText.y = Math.floor((CANVAS_HEIGHT - 56) * 2 / 3);
 container.addChild(nextText);
 
 var scoreText = new PIXI.Text("Score\n0", {fill: "black"});
-scoreText.position.y = CANVAS_HEIGHT - 56;
+scoreText.x = MARGIN;
+scoreText.y = CANVAS_HEIGHT - 56 - MARGIN;
 container.addChild(scoreText);
 
 /**
@@ -203,10 +210,14 @@ var blockSprites = [];
 var ghostSprites = [];
 
 var level = 0;
+var startingLevel = 0;
 var clearedLines = 0;
 var score = 0;
+var highscore = 0;
 
 var fastDrop = false;
+
+var renderRequest;
 
 var nextPicture = new PIXI.Sprite();
 container.addChild(nextPicture);
@@ -329,7 +340,46 @@ function calculateOffsetGhost() {
  *
  * All functions modify grid, and everything sprite related is handled by render()
  */
+function newGame() {
+	for (var x = 0; x < GRID_WIDTH; x++) {
+		for (var y = 0; y < GRID_HEIGHT; y++) {
+			if (grid[x][y].sprite !== null) {
+				container.removeChild(grid[x][y].sprite);
+			}
+			grid[x][y] = {
+				color: null,
+				exists: false,
+				sprite: null
+			};
+		}
+	}
+	for (var i = 0; i < blockSprites.length; i++) {
+		container.removeChild(blockSprites[i]);
+		container.removeChild(ghostSprites[i]);
+	}
 
+	// RESET
+	offsetX = 0;
+	offsetY = 0;
+	offsetGhost = 0;
+	paused = false;
+	frameCounter = 1;
+	block = getRandomBlock();
+	nextBlock = getRandomBlock();
+	rotation = 0;
+	blockSprites = [];
+	ghostSprites = [];
+	level = 0;
+	clearedLines = 0;
+	score = 0;
+	fastDrop = false;
+
+	startingLevel = parseInt(localStorage.getItem("tetris-startingLevel"));
+	highscore = parseInt(localStorage.getItem("tetris-highscore"));
+
+	renderRequest = requestAnimationFrame(render);
+	newRound();
+}
 function newRound() {
 	var linesClearedThisRound = 0;
 
@@ -360,7 +410,7 @@ function newRound() {
 		}
 	}
 
-	level = Math.floor(clearedLines / 10); // based on NES version
+	level = Math.floor(clearedLines / 10) + startingLevel; // based on NES version
 	score += POINTS_FOR_LINE[linesClearedThisRound] * (level + 1);
 
 	// enforce max level/score
@@ -469,11 +519,29 @@ function rotate(direction) {
 
 function lose() {
 	paused = true;
+	cancelAnimationFrame(renderRequest);
+	if (score >= highscore) {
+		highscore = score;
+		localStorage.setItem("tetris-highscore", highscore);
+		swal({
+			title: "Congrats!",
+			text: "You got a new highscore of " + score + "!",
+			type: "success",
+			confirmButtonText: "New Game",
+			allowEscapeKey: false
+		}, function() {
+			newGame();
+		});
+	}
 	swal({
-		title: "Congrats!",
-		text: "You got a score of " + score + "!",
-		type: "success"
-	});
+		title: "Game Over",
+		text: "You got a score of " + score + ".",
+		type: "info",
+		confirmButtonText: "New Game",
+		allowEscapeKey: false
+	}, function() {
+		newGame();
+	})
 }
 
 /**
@@ -524,14 +592,35 @@ function render() {
 	}
 
 	renderer.render(container);
-	requestAnimationFrame(render);
+	renderRequest = requestAnimationFrame(render);
 }
+
+/**
+ * Local Storage
+ */
+
 
 /**
  * RUN!
  */
 
 document.addEventListener("DOMContentLoaded", function(event) {
+	// Use localstorage to store options
+	if (localStorage.getItem("tetris-highscore") !== null) {
+		document.querySelector("#startingLevel").value = localStorage.getItem("tetris-startingLevel");
+	}
+	else {
+		// Default
+		localStorage.setItem("tetris-startingLevel", 0);
+		localStorage.setItem("tetris-highscore", 0);
+	}
+
+	// Bottom bar options
+	document.querySelector("#startingLevel").addEventListener("change", function(event) {
+		startingLevel = Math.max(0, Math.min(MAX_LEVEL, parseInt(document.querySelector("#startingLevel").value)));
+		localStorage.setItem("tetris-startingLevel", startingLevel);
+	});
+
 	document.querySelector("#container").insertBefore(renderer.view, document.querySelector("#container").lastChild);
-	requestAnimationFrame(render);
+	newGame();
 });
