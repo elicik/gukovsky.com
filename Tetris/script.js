@@ -209,36 +209,35 @@ var score = 0;
 var nextPicture = new PIXI.Sprite();
 container.addChild(nextPicture);
 
-// needed in order to cancel drop() or render()
-var dropRequest;
-var renderRequest;
+// Action queue to store all functions so they don't run simultaneously 
+var actions = [];
 
 /**
  * EVENT LISTENERS
  */
 
 window.addEventListener("keydown", function(e) {
-	var key = e.which || e.keyCode;
-	if (e.shiftKey) { // shift
-		frameCounter = 0;
+	if (paused) {
+		return;
 	}
+	var key = e.which || e.keyCode;
 	if (key === 37) { // left
-		move("left");
+		actions.push(wrapFunction(move, this, ["left"]));
 	}
 	if (key === 38) { // up
-		rotate("counterClockwise");
+		actions.push(wrapFunction(rotate, this, ["counterClockwise"]));
 	}
 	if (key === 39) { // right
-		move("right");
+		actions.push(wrapFunction(move, this, ["right"]));
 	}
 	if (key === 40) { // down
-		bottom();
+		actions.push(wrapFunction(bottom, this, []));
 	}
 	if (key === 90) { // Z
-		rotate("clockwise");
+		actions.push(wrapFunction(rotate, this, ["clockwise"]));
 	}
 	if (key === 88) { // X
-		rotate("counterClockwise");
+		actions.push(wrapFunction(rotate, this, ["counterClockwise"]));
 	}
 });
 
@@ -247,10 +246,16 @@ window.addEventListener("keydown", function(e) {
  */
 
 // checks left side, right side, bottom, and other pieces
+function wrapFunction(fn, context, params) {
+	return function() {
+		fn.apply(context, params);
+	};
+}
+
 function getRandomBlock() {
-    var keys = Object.keys(BLOCKS)
-    var index = Math.floor(Math.random() * keys.length);
-    return JSON.parse(JSON.stringify(BLOCKS[keys[index]]));
+	var keys = Object.keys(BLOCKS)
+	var index = Math.floor(Math.random() * keys.length);
+	return JSON.parse(JSON.stringify(BLOCKS[keys[index]]));
 }
 
 function validSpot(offX, offY) {
@@ -276,9 +281,11 @@ function clearLine(line) {
 	}
 	// clear top row
 	for (var i = 0; i < GRID_WIDTH; i++) {
-		grid[i][0].color = null;
-		grid[i][0].exists = false;
-		grid[i][0].sprite = null;
+		grid[i][0] = {
+			color: null,
+			exists: false,
+			sprite: null
+		}
 	}
 
 }
@@ -334,8 +341,8 @@ function newRound() {
 		}
 		if (grid[x][y].exists) {
 			// lose();
-			cancelAnimationFrame(renderRequest);
-			alert("Praveen");
+			paused = true;
+			alert("Taha");
 			return;
 		}
 	}
@@ -359,7 +366,6 @@ function newRound() {
 	container.addChild(nextPicture);
 
 	frameCounter = 1;
-	drop();
 }
 
 function drop() {
@@ -382,12 +388,10 @@ function drop() {
 		}
 	}
 	frameCounter = (frameCounter + 1) % FRAMES_PER_LEVEL[level];
-	dropRequest = requestAnimationFrame(drop);
 }
 
 // logic is basically the same as drop(), but uses a do-while instead of requestAnimationFrame so it happens instantly
 function bottom() {
-	cancelAnimationFrame(dropRequest);
 	while (validSpot(offsetX, offsetY+1)) {
 		offsetY++;
 	}
@@ -451,12 +455,6 @@ function rotate(direction) {
 }
 
 function pause() {
-	if (paused) {
-		drop();
-	}
-	if (!paused) {
-		cancelAnimationFrame(dropRequest);
-	}
 	paused = !paused;
 }
 /**
@@ -464,6 +462,12 @@ function pause() {
  */
 
 function render() {
+	while (actions.length > 0) {
+		(actions.shift())();
+	}
+	if (!paused) {
+		drop();
+	}
 	for (var x = 0; x < GRID_WIDTH; x++) {
 		for (var y = 0; y < GRID_HEIGHT; y++) {
 			if (grid[x][y].sprite !== null) {
@@ -501,7 +505,7 @@ function render() {
 	}
 
 	renderer.render(container);
-	renderRequest = requestAnimationFrame(render);
+	requestAnimationFrame(render);
 }
 
 /**
@@ -510,7 +514,5 @@ function render() {
 
 document.addEventListener("DOMContentLoaded", function(event) {
 	document.querySelector("#container").insertBefore(renderer.view, document.querySelector("#container").lastChild);
-	render();
-	newRound();
-
+	requestAnimationFrame(render);
 });
