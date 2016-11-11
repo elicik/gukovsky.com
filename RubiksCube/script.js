@@ -225,7 +225,7 @@ function rotateAnimationFrame() {
 
 
 // RENDERER
-var renderer = new THREE.WebGLRenderer({ alpha : true });
+var renderer = new THREE.WebGLRenderer({ alpha : true, antialias: true });
 
 // RENDER
 function render() {
