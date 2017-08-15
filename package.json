@@ -1,0 +1,16 @@
+{
+  "name": "Website",
+  "version": "1.0.0",
+  "main": "index.html",
+  "repository": "https://github.com/elicik/Website.git",
+  "author": "Eli Gukovsky <gukovskye@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "jquery": "latest",
+    "normalize.css": "latest",
+    "opinionate.css": "latest",
+    "pixi.js": "latest",
+    "sweetalert": "latest",
+    "three": "latest"
+  }
+}
