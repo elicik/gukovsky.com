@@ -60,7 +60,6 @@ function generateVisuals(deck, sideboard) {
 	console.log(sideboard);
 }
 
-
 document.addEventListener("DOMContentLoaded", function(event) {
-	document.querySelector("#file-picker").addEventListener('change', generateXML);
+	document.querySelector("#file-picker").addEventListener("change", generateXML);
 });
