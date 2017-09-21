@@ -6,6 +6,7 @@
   "author": "Eli Gukovsky <gukovskye@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "firebase": "^4.3.1",
     "jquery": "latest",
     "mana-font": "latest",
     "normalize.css": "latest",
