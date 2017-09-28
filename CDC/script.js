@@ -18,12 +18,26 @@ document.addEventListener("DOMContentLoaded", function() {
 	});
 	document.querySelector("#add").addEventListener("click", function() {
 		counter.once("value").then(function(snapshot) {
-			counter.set(snapshot.val() + 1);
+			var value = snapshot.val();
+			if (value >= 7) {
+				swal("There's too many people in the CDC! Get out!");
+				counter.set(7);
+			}
+			else {
+				counter.set(value + 1);
+			}
 		});
 	});
 	document.querySelector("#subtract").addEventListener("click", function() {
 		counter.once("value").then(function(snapshot) {
-			counter.set(snapshot.val() - 1);
+			var value = snapshot.val();
+			if (value <= 0) {
+				swal("That doesn't seem right");
+				counter.set(0);
+			}
+			else {
+				counter.set(value - 1);
+			}
 		});
 	});
 });
