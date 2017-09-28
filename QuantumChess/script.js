@@ -78,9 +78,7 @@ function endTurn(source, target) {
 
 function gameOver(winner) {
 	/* TODO: do more than say winner */
-	sweetAlert({
-		title: winner + " wins!"
-	});
+	swal(winner + " wins!");
 }
 
 function checkPromotion(source) {
@@ -93,21 +91,22 @@ function checkPromotion(source) {
 function promotePiece(source, target) {
 	var color = turn;
 	var promotionOptions = "";
-	promotionOptions += '<div id="buttons">';
 	for (var i = 0; i < 4; i++) {
 		var letter = "bnrq".split("")[i];
 		promotionOptions += '<button data-piecetype="' + letter + '">';
 		promotionOptions += '<img src="lib/chessboardjs/img/chesspieces/' + color + letter.toUpperCase() + '.png">';
 		promotionOptions += '</button>';
 	}
-	promotionOptions += '</div>';
+	var div = document.createElement("div");
+	div.id = "buttons";
+	div.innerHTML = promotionOptions;
 
-	sweetAlert({
+	swal({
 		title: "Which piece would you like to promote this pawn to?",
-		text: promotionOptions,
-		html: true,
-		showConfirmButton: false,
-		allowEscapeKey: false
+		content: div,
+		closeOnEsc: false,
+		closeOnClickOutside: false,
+		buttons: false
 	});
 
 	$("#buttons button").one("click", function() {
@@ -120,7 +119,7 @@ function promotePiece(source, target) {
 		}, target);
 		secondary.put(secondary.remove(source), target);
 
-		sweetAlert.close();
+		swal.close();
 		endTurn(source, target);
 	})
 }

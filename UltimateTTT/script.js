@@ -129,8 +129,10 @@ $(document).ready(function() {
 					title: "Game over!",
 					text: (turn ? "Red" : "Blue") + " won! Congrats!",
 					type: "success",
-					confirmButtonClass: "btn-success",
-					confirmButtonText: "OK"
+					buttons: {
+						cancel: false,
+						confirm: "OK"
+					}
 				});
 			}
 			else if(tie()) { // Game tied
@@ -141,8 +143,10 @@ $(document).ready(function() {
 					title: "Game over!",
 					text: "There was a tie!",
 					type: "info",
-					confirmButtonClass: "btn-success",
-					confirmButtonText: "OK"
+					buttons: {
+						cancel: false,
+						confirm: "OK"
+					}
 				});
 			}
 			else { // If square is available, make it possible. If not, make everything possible

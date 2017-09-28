@@ -532,22 +532,26 @@ function lose() {
 			title: "Congrats!",
 			text: "You got a new highscore of " + score + "!",
 			type: "success",
-			confirmButtonText: "New Game",
-			allowEscapeKey: false
-		}, function() {
-			newGame();
-		});
+			buttons: {
+				cancel: false,
+				confirm: "New Game"
+			},
+			closeOnEsc: false,
+			closeOnClickOutside: false
+		}).then(newGame);
 	}
 	else {
 		swal({
 			title: "Game Over",
 			text: "You got a score of " + score + ".",
 			type: "info",
-			confirmButtonText: "New Game",
-			allowEscapeKey: false
-		}, function() {
-			newGame();
-		});
+			buttons: {
+				cancel: false,
+				confirm: "New Game"
+			},
+			closeOnEsc: false,
+			closeOnClickOutside: false
+		}).then(newGame);
 	}
 }
 

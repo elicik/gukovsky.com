@@ -7,11 +7,9 @@ function win() {
 	swal({
 		title: "You won! It took " + guesses + " guesses",
 		type: "success",
-		allowEscapeKey: false,
-		closeOnConfirm: false
-	}, function() {
-		selectGameType();
-	});
+		closeOnEsc: false,
+		closeOnClickOutside: false
+	}).then(selectGameType);
 }
 
 function setKeyMode() {
@@ -149,19 +147,17 @@ function selectGameType() {
 	swal({
 		title: "Choose a game type",
 		text: "You can either play against a computer, or against a friend",
-		showCancelButton: true,
-		confirmButtonText: "Play against a friend",
-		cancelButtonText: "Play against a computer",
-		allowEscapeKey: false,
-		closeOnConfirm: false,
-		closeOnCancel: true,
-	}, function(isConfirm) {
+		buttons: ["Play against a computer", "Play against a friend"],
+		closeOnEsc: false,
+		closeOnClickOutside: false,
+	}).then(function(isConfirm) {
 		if (isConfirm) {
 			swal({
 				title: "Get ready!",
 				text: "Don't let the other person look before you've submitted your key!",
-				allowEscapeKey: false,
-			}, setKeyMode);
+				closeOnEsc: false,
+				closeOnClickOutside: false,
+			}).then(setKeyMode);
 		}
 		else {
 			// Computer opponent
