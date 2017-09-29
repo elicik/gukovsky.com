@@ -22,9 +22,6 @@ var grid = [
 function reset() {
 	turn = true;
 	grid = [[[["", "", ""], ["", "", ""], ["", "", ""]], [["", "", ""], ["", "", ""], ["", "", ""]], [["", "", ""], ["", "", ""], ["", "", ""]]], [[["", "", ""], ["", "", ""], ["", "", ""]], [["", "", ""], ["", "", ""], ["", "", ""]], [["", "", ""], ["", "", ""], ["", "", ""]] ], [[["", "", ""], ["", "", ""], ["", "", ""]], [["", "", ""], ["", "", ""], ["", "", ""]], [["", "", ""], ["", "", ""], ["", "", ""]]]];
-	$("#TTT-winner").html("");
-	$("#TTT-turnText").css("display", "block");
-	$("#TTT-button").css("display", "none");
 	$(".Red").removeClass("Red");
 	$(".Blue").removeClass("Blue");
 	$("table table td").addClass("possible");
@@ -122,32 +119,26 @@ $(document).ready(function() {
 			}
 
 			if(winner()) { // Game winner
-				$("#TTT-winner").html((turn ? "Red" : "Blue") + " won! Congrats!");
-				$("#TTT-turnText").css("display", "none");
-				$("#TTT-button").css("display", "inline-block");
 				swal({
 					title: "Game over!",
 					text: (turn ? "Red" : "Blue") + " won! Congrats!",
 					type: "success",
 					buttons: {
 						cancel: false,
-						confirm: "OK"
+						confirm: "Play again"
 					}
-				});
+				}).then(reset);
 			}
 			else if(tie()) { // Game tied
-				$("#TTT-winner").html("The match ended with a tie!");
-				$("#TTT-turnText").css("display", "none");
-				$("#TTT-button").css("display", "inline-block");
 				swal({
 					title: "Game over!",
 					text: "There was a tie!",
 					type: "info",
 					buttons: {
 						cancel: false,
-						confirm: "OK"
+						confirm: "Play again"
 					}
-				});
+				}).then(reset);
 			}
 			else { // If square is available, make it possible. If not, make everything possible
 				if($.isArray(grid[i][j])) {
