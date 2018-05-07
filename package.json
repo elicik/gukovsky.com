@@ -6,11 +6,10 @@
   "author": "Eli Gukovsky <gukovskye@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "firebase": "^4.3.1",
+    "firebase": "latest",
     "jquery": "latest",
     "mana-font": "latest",
     "normalize.css": "latest",
-    "opinionate.css": "latest",
     "pixi.js": "latest",
     "sweetalert": "latest",
     "three": "latest"
