@@ -85,8 +85,7 @@ for (var x = 0; x < 3; x++) {
 					cubeMaterialArray.push(cubeColors[6]);
 					break;
 			}
-			var material = new THREE.MeshFaceMaterial(cubeMaterialArray);
-			cubes[9*x + 3*y + z] = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.9, 15, 15, 15), material);
+			cubes[9*x + 3*y + z] = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.9, 15, 15, 15), cubeMaterialArray);
 			cubes[9*x + 3*y + z].position.x = x - 1;
 			cubes[9*x + 3*y + z].position.y = y - 1;
 			cubes[9*x + 3*y + z].position.z = z - 1;
@@ -118,7 +117,7 @@ function rotateSide() {
 function rotateReset() {
 	angle = 0;
 	for (var i = side.children.length - 1; i >= 0; i--) {
-		THREE.SceneUtils.detach(side.children[i], side, scene);
+		scene.attach(side.children[i]);
 	}
 	scene.remove(side);
 	// Round to say screw you to floating points
@@ -207,7 +206,7 @@ function rotate(sideLetter, prime) {
 	side.rotation.set(0, 0, 0);
 	for (var i = 0; i < cubes.length; i++) {
 		if (zPosition == null || cubes[i].position.getComponent(zComponent) == zPosition) {
-			THREE.SceneUtils.attach(cubes[i], scene, side);
+			side.attach(cubes[i]);
 		}
 	}
 	scene.add(side);

@@ -268,7 +268,7 @@ function win() {
 		swal({
 			title: "Congrats!",
 			text: "You got a highscore of " + clock + "!",
-			type: "success",
+			icon: "success",
 			timer: 4000,
 		});
 		selectedDifficulty.setHighscore(clock);

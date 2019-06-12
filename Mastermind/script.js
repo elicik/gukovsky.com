@@ -6,7 +6,7 @@ var guesses = 0;
 function win() {
 	swal({
 		title: "You won! It took " + guesses + " guesses",
-		type: "success",
+		icon: "success",
 		closeOnEsc: false,
 		closeOnClickOutside: false
 	}).then(selectGameType);

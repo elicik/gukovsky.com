@@ -6,12 +6,12 @@
   "author": "Eli Gukovsky <gukovskye@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "firebase": "latest",
-    "jquery": "latest",
-    "mana-font": "latest",
-    "normalize.css": "latest",
-    "pixi.js": "latest",
-    "sweetalert": "latest",
-    "three": "latest"
+    "firebase": "^6.1.1",
+    "jquery": "^3.4.1",
+    "mana-font": "^1.4.1",
+    "normalize.css": "^8.0.1",
+    "pixi.js": "^5.0.4",
+    "sweetalert": "^2.1.2",
+    "three": "^0.105.2"
   }
 }

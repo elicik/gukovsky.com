@@ -212,7 +212,7 @@ function waitForBall(winner) {
 }
 
 // RENDER
-var renderer = PIXI.autoDetectRenderer(width, height, {transparent: true});
+var renderer = PIXI.autoDetectRenderer({"width": width, "height": height, "transparent": true});
 function render() {
 	// Move paddles
 	if (keys.w && paddle1.position.y > border()) {

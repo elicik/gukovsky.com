@@ -142,7 +142,7 @@ var CANVAS_HEIGHT = GRID_HEIGHT * SPRITE_WIDTH;
  */
 
 var container = new PIXI.Container();
-var renderer = PIXI.autoDetectRenderer(CANVAS_WIDTH, CANVAS_HEIGHT);
+var renderer = PIXI.autoDetectRenderer({"width": CANVAS_WIDTH, "height": CANVAS_HEIGHT});
 
 /**
  * TEXT / SCOREBOARD
@@ -428,7 +428,7 @@ function newRound() {
 
 	// set nextPicture to a picture of the next piece
 	container.removeChild(nextPicture);
-	nextPicture = PIXI.Sprite.fromImage("tetrominos/" + nextBlock.type + ".png");
+	nextPicture = PIXI.Sprite.from("tetrominos/" + nextBlock.type + ".png");
 	nextPicture.x = SPRITE_WIDTH / 2;
 	nextPicture.y = Math.floor(CANVAS_HEIGHT / 2 + SPRITE_WIDTH / 2);
 	container.addChild(nextPicture);
@@ -531,7 +531,7 @@ function lose() {
 		swal({
 			title: "Congrats!",
 			text: "You got a new highscore of " + score + "!",
-			type: "success",
+			icon: "success",
 			buttons: {
 				cancel: false,
 				confirm: "New Game"
@@ -544,7 +544,7 @@ function lose() {
 		swal({
 			title: "Game Over",
 			text: "You got a score of " + score + ".",
-			type: "info",
+			icon: "info",
 			buttons: {
 				cancel: false,
 				confirm: "New Game"
@@ -573,7 +573,7 @@ function render() {
 				grid[x][y].sprite = null;
 			}
 			if (grid[x][y].exists) {
-				grid[x][y].sprite = PIXI.Sprite.fromImage("blocks/" + grid[x][y].color + ".png");
+				grid[x][y].sprite = PIXI.Sprite.from("blocks/" + grid[x][y].color + ".png");
 				grid[x][y].sprite.x = x * SPRITE_WIDTH + SCOREBOARD_WIDTH;
 				grid[x][y].sprite.y = y * SPRITE_WIDTH;
 				container.addChild(grid[x][y].sprite);
@@ -589,14 +589,14 @@ function render() {
 	for (var i = 0; i < points.length; i++) {
 		var x = points[i][0] + offsetX;
 		var ghostY = points[i][1] + offsetGhost;
-		ghostSprites[i] = PIXI.Sprite.fromImage("blocks/grey.png");
+		ghostSprites[i] = PIXI.Sprite.from("blocks/grey.png");
 		ghostSprites[i].x = x * SPRITE_WIDTH + SCOREBOARD_WIDTH;
 		ghostSprites[i].y = ghostY * SPRITE_WIDTH;
 		container.addChild(ghostSprites[i]);
 
 		// add ghosts before blocks in order for the ghost not to cover the block
 		var y = points[i][1] + offsetY;
-		blockSprites[i] = PIXI.Sprite.fromImage("blocks/" + block.color + ".png");
+		blockSprites[i] = PIXI.Sprite.from("blocks/" + block.color + ".png");
 		blockSprites[i].x = x * SPRITE_WIDTH + SCOREBOARD_WIDTH;
 		blockSprites[i].y = y * SPRITE_WIDTH;
 		container.addChild(blockSprites[i]);

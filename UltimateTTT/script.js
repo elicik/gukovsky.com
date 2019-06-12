@@ -122,7 +122,7 @@ $(document).ready(function() {
 				swal({
 					title: "Game over!",
 					text: (turn ? "Red" : "Blue") + " won! Congrats!",
-					type: "success",
+					icon: "success",
 					buttons: {
 						cancel: false,
 						confirm: "Play again"
@@ -133,7 +133,7 @@ $(document).ready(function() {
 				swal({
 					title: "Game over!",
 					text: "There was a tie!",
-					type: "info",
+					icon: "info",
 					buttons: {
 						cancel: false,
 						confirm: "Play again"
