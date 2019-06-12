@@ -1,31 +1,78 @@
 "use strict";
 
+// TODO: Keep past versions of grid and move
+
+function create_blank_grid(default_value) {
+	return new Array(3).map(() => new Array(3).map(() => new Array(3).map(() => new Array(3).fill(default_value))));
+}
+
 var app = new Vue({
 	el: "#app",
 	data: {
 		turn: "X",
-		grid: [
-			[
-				[[,,], [,,], [,,]],
-				[[,,], [,,], [,,]],
-				[[,,], [,,], [,,]]
-			],
-			[
-				[[,,], [,,], [,,]],
-				[[,,], [,,], [,,]],
-				[[,,], [,,], [,,]]
-			],
-			[
-				[[,,], [,,], [,,]],
-				[[,,], [,,], [,,]],
-				[[,,], [,,], [,,]]
-			]
-		]
+		grid: create_blank_grid(""),
+		last_move: []
 	},
 	computed: {
+		big_grid: function() {
+			let result = [["","",""],["","",""],["","",""]];
+			for (let row = 0; row < 3; row++) {
+				for (let col = 0; col < 3; col++) {
+					for (let player of ["X", "O"]) {
+						for (let i = 0; i < 3; i++) {
+							// Horizontal
+							if (this.grid[row][col][i].every(x => x === player)) {
+								result[row][col] = player;
+							}
+							// Vertical
+							if ([this.grid[row][col][0][i], this.grid[row][col][1][i], this.grid[row][col][2][i]].every(x => x === player)) {
+								result[row][col] = player;
+							}
+						}
+						// Diagonals
+						if ([this.grid[row][col][0][0], this.grid[row][col][1][1], this.grid[row][col][2][2]].every(x => x === player)) {
+							result[row][col] = player;
+						}
+						if ([this.grid[row][col][0][2], this.grid[row][col][1][1], this.grid[row][col][2][0]].every(x => x === player)) {
+							result[row][col] = player;
+						}
+					}
+				}
+			}
+			return result;
+		}
 		possible: function() {
 			// TODO: Return possible moves
-			// Alternatively, make the grid a bunch of objects
+			if (this.last_move.length == 0) {
+				return create_blank_grid(true);
+			}
+			else if (this.big_grid[last_move[2], last_move[3]] !== "") {
+				return this.grid.map(function(row, row_num) {
+					return row.map(function(col, col_num) {
+						if (this.big_grid[row_num][col_num] !== "") {
+							return [[false, false, false], [false, false, false], [false, false, false]];
+						}
+						else {
+							return col.map(function(i) {
+								return i.map(function(j) {
+									return j === "";
+								});
+							});
+						}
+					});
+				});
+			}
+			else {
+				let result = create_blank_grid(false);
+				let row = last_move[2];
+				let col = last_move[3];
+				result[row][col] = this.grid[row][col].map(function(i) {
+					return i.map(function(j) {
+						return j === "";
+					});
+				});
+				return result;
+			}
 		}
 	}
 })
@@ -61,49 +108,31 @@ function reset() {
 }
 
 function tie() {
-	var result = true;
-	for(var row = 0; row < 3; row++) {
-		for(var col = 0; col < 3; col++) {
-			if($.isArray(grid[row][col])) {
-				result = false;
-			}
-		}
-	}
-	return result;
+	// Assuming winner() is false
+	return !this.big_grid.flat().some("");
 }
 
 function winner() {
-	var result = false;
-	for(var i = 0; i < 3; i++) {
-		result = result || JSON.stringify(grid[i]) === JSON.stringify(["Red", "Red", "Red"]);
-		result = result || JSON.stringify(grid[i]) === JSON.stringify(["Blue", "Blue", "Blue"]);
-
-		result = result || JSON.stringify([grid[0][i], grid[1][i], grid[2][i]]) === JSON.stringify(["Red", "Red", "Red"]);
-		result = result || JSON.stringify([grid[0][i], grid[1][i], grid[2][i]]) === JSON.stringify(["Blue", "Blue", "Blue"]);
+	for (let player of ["X", "O"]) {
+		for (let i = 0; i < 3; i++) {
+			// Horizontal
+			if (this.big_grid[i].every(x => x === player)) {
+				return player;
+			}
+			// Vertical
+			if ([this.big_grid[0][i], this.big_grid[1][i], this.big_grid[2][i]].every(x => x === player)) {
+				return player;
+			}
+		}
+		// Diagonals
+		if ([this.big_grid[0][0], this.big_grid[1][1], this.big_grid[2][2]].every(x => x === player)) {
+			return player;
+		}
+		if ([this.big_grid[0][2], this.big_grid[1][1], this.big_grid[2][0]].every(x => x === player)) {
+			return player;
+		}
 	}
-	result = result || JSON.stringify([grid[0][0], grid[1][1], grid[2][2]]) === JSON.stringify(["Red", "Red", "Red"]);
-	result = result || JSON.stringify([grid[0][0], grid[1][1], grid[2][2]]) === JSON.stringify(["Blue", "Blue", "Blue"]);
-
-	result = result || JSON.stringify([grid[0][2], grid[1][1], grid[2][0]]) === JSON.stringify(["Red", "Red", "Red"]);
-	result = result || JSON.stringify([grid[0][2], grid[1][1], grid[2][0]]) === JSON.stringify(["Blue", "Blue", "Blue"]);
-	return result;
-}
-
-function winSquare(row, col) {
-	var result = false;
-	for(var i = 0; i < 3; i++) {
-		result = result || JSON.stringify(grid[row][col][i]) === JSON.stringify(["Red", "Red", "Red"]);
-		result = result || JSON.stringify(grid[row][col][i]) === JSON.stringify(["Blue", "Blue", "Blue"]);
-
-		result = result || JSON.stringify([grid[row][col][0][i], grid[row][col][1][i], grid[row][col][2][i]]) === JSON.stringify(["Red", "Red", "Red"]);
-		result = result || JSON.stringify([grid[row][col][0][i], grid[row][col][1][i], grid[row][col][2][i]]) === JSON.stringify(["Blue", "Blue", "Blue"]);
-	}
-	result = result || JSON.stringify([grid[row][col][0][0], grid[row][col][1][1], grid[row][col][2][2]]) === JSON.stringify(["Red", "Red", "Red"]);
-	result = result || JSON.stringify([grid[row][col][0][0], grid[row][col][1][1], grid[row][col][2][2]]) === JSON.stringify(["Blue", "Blue", "Blue"]);
-
-	result = result || JSON.stringify([grid[row][col][0][2], grid[row][col][1][1], grid[row][col][2][0]]) === JSON.stringify(["Red", "Red", "Red"]);
-	result = result || JSON.stringify([grid[row][col][0][2], grid[row][col][1][1], grid[row][col][2][0]]) === JSON.stringify(["Blue", "Blue", "Blue"]);
-	return result;
+	return "";
 }
 
 $(document).ready(function() {

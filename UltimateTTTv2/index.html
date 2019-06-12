@@ -19,7 +19,6 @@
 		<link rel="manifest" href="/manifest.json">
 		<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#000000">
 		<meta name="theme-color" content="#ffffff">
-		<script src="../node_modules/jquery/dist/jquery.min.js"></script>
 		<script src="../node_modules/sweetalert/dist/sweetalert.min.js"></script>
 		<script src="../node_modules/vue/dist/vue.min.js"></script>
 		<script src="script.js"></script>
@@ -30,18 +29,18 @@
 				<p>Programmed and designed as a group effort by Taha Vasowalla and myself.</p>
 			</div>
 			<table id="ultimate">
-				<tr v-for="row in grid">
-					<td v-for="col in row">
+				<tr v-for="(row, row_num) in grid">
+					<td v-for="(col, col_num) in row" v-bind:class="big_grid[row_num][col_num]">
 						<table>
-							<tr v-for="i in col">
-								<td v-for="j in i">
+							<tr v-for="(i, i_num) in col">
+								<td v-for="(j, j_num) in i" v-bind:class="[j, {possible: possible[row_num][col_num][i_num][j_num]}]">
 								</td>
 							</tr>
 						</table>
 					</td>
 				</tr>
 			</table>
-			<p id="TTT-turnText">It is <span id="turn">Red</span>'s turn.</p>
+			<p id="TTT-turnText">It is <span id="turn">{{turn}}</span>'s turn.</p>
 		</div>
 		<div id="rules"><a target="_blank" href="http://mathwithbaddrawings.com/2013/06/16/ultimate-tic-tac-toe">Rules</a></div>
 		<div id="return-to-home"><a href="../">Eli Gukovsky</a></div>
