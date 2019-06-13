@@ -1,5 +1,9 @@
-#turn {
+#turn.X {
   color: #FF7B64;
+}
+
+#turn.O {
+  color: #647BFF;
 }
 
 #app {

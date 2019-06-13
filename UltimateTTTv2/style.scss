@@ -1,8 +1,12 @@
 $red-color: #FF7B64;
 $blue-color: #647BFF;
 
-#turn {
+#turn.X {
 	color: $red-color;
+}
+
+#turn.O {
+	color: $blue-color;
 }
 
 #app {
