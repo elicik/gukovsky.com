@@ -1,0 +1,65 @@
+<%
+var title = "Minesweeper";
+var description = "Minesweeper made in pure JavaScript";
+%>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<%- include ../_header.ejs %>
+	</head>
+	<body id="size-20">
+		<div id="xyzzy"></div>
+		<div id="outer">
+			<div id="wrapper">
+				<div class="row">
+					<div class="item-container" id="numBombs">000</div>
+					<div class="item-container">
+						<div id="smiley"></div>
+					</div>
+					<div class="item-container" id="clock">000</div>
+				</div>
+				<div class="row">
+					<div class="item-container">
+						<table id="minesweeper"></table>
+					</div>
+				</div>
+				<div class="row">
+					<div class="item-container">
+						<select id="size" class="extra-margin">
+							<option value="20" selected>Small</option>
+							<option value="30">Normal</option>
+							<option value="40">Big</option>
+						</select>
+					</div>
+					<div class="item-container">
+						<div class="flex-column-layout">
+							<div class="extra-margin">
+								<select id="difficulty">
+									<option value="BEGINNER">Beginner</option>
+									<option value="INTERMEDIATE" selected>Intermediate</option>
+									<option value="EXPERT">Expert</option>
+								</select>
+							</div>
+							<div class="extra-margin">
+								Highscore: <span id="highscore">None yet!</span>
+							</div>
+						</div>
+					</div>
+					<div class="item-container">
+						<div class="flex-column-layout">
+							<div class="extra-margin">
+								<label for="hints" title="Hints act like normal tiles, but are helpful for some players">Hints (?): </label>
+								<input type="checkbox" id="hints">								
+							</div>
+							<div class="extra-margin">
+								<label for="oldfashioned" title="Click tiles with flags with both buttons rather than just the left">Classic clicking: </label>
+								<input type="checkbox" id="oldfashioned">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<%- include ../_footer.ejs %>
+	</body>
+</html>

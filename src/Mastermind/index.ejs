@@ -1,0 +1,118 @@
+<%
+var title = "Mastermind";
+var description = "Mastermind made in pure JavaScript";
+var rules = "http://www.web-games-online.com/mastermind/rules.php";
+%>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<%- include ../_header.ejs %>
+	</head>
+	<body>
+		<div id="mastermind">
+			<h1 id="mode"></h1>
+			<div id="key-mode">
+				<div id="key">
+					<div class="color-selector">
+						<div class="dropdown">
+							<div data-color="red"></div>
+							<div data-color="orange"></div>
+							<div data-color="yellow"></div>
+							<div data-color="green"></div>
+							<div data-color="blue"></div>
+							<div data-color="purple"></div>
+						</div>
+						<div class="preview"></div>
+					</div>
+					<div class="color-selector">
+						<div class="dropdown">
+							<div data-color="red"></div>
+							<div data-color="orange"></div>
+							<div data-color="yellow"></div>
+							<div data-color="green"></div>
+							<div data-color="blue"></div>
+							<div data-color="purple"></div>
+						</div>
+						<div class="preview"></div>
+					</div>
+					<div class="color-selector">
+						<div class="dropdown">
+							<div data-color="red"></div>
+							<div data-color="orange"></div>
+							<div data-color="yellow"></div>
+							<div data-color="green"></div>
+							<div data-color="blue"></div>
+							<div data-color="purple"></div>
+						</div>
+						<div class="preview"></div>
+					</div>
+					<div class="color-selector">
+						<div class="dropdown">
+							<div data-color="red"></div>
+							<div data-color="orange"></div>
+							<div data-color="yellow"></div>
+							<div data-color="green"></div>
+							<div data-color="blue"></div>
+							<div data-color="purple"></div>
+						</div>
+						<div class="preview"></div>
+					</div>
+				</div>
+				<button name="submitKey">Set key</button>
+			</div>
+			<div id="guess-mode">
+				<div id="guess">
+					<div class="color-selector">
+						<div class="dropdown">
+							<div data-color="red"></div>
+							<div data-color="orange"></div>
+							<div data-color="yellow"></div>
+							<div data-color="green"></div>
+							<div data-color="blue"></div>
+							<div data-color="purple"></div>
+						</div>
+						<div class="preview"></div>
+					</div>
+					<div class="color-selector">
+						<div class="dropdown">
+							<div data-color="red"></div>
+							<div data-color="orange"></div>
+							<div data-color="yellow"></div>
+							<div data-color="green"></div>
+							<div data-color="blue"></div>
+							<div data-color="purple"></div>
+						</div>
+						<div class="preview"></div>
+					</div>
+					<div class="color-selector">
+						<div class="dropdown">
+							<div data-color="red"></div>
+							<div data-color="orange"></div>
+							<div data-color="yellow"></div>
+							<div data-color="green"></div>
+							<div data-color="blue"></div>
+							<div data-color="purple"></div>
+						</div>
+						<div class="preview"></div>
+					</div>
+					<div class="color-selector">
+						<div class="dropdown">
+							<div data-color="red"></div>
+							<div data-color="orange"></div>
+							<div data-color="yellow"></div>
+							<div data-color="green"></div>
+							<div data-color="blue"></div>
+							<div data-color="purple"></div>
+						</div>
+						<div class="preview"></div>
+					</div>
+				</div>
+				<button name="submitGuess">Confirm guess</button>
+				<h4 id="history-header"></h4>
+				<div id="history">
+				</div>
+			</div>
+		</div>
+		<%- include ../_footer.ejs %>
+	</body>
+</html>

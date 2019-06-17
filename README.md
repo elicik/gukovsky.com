@@ -1,2 +1,0 @@
-# Website
-eli.gukovsky.com

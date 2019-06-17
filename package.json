@@ -1,18 +1,37 @@
 {
   "name": "Website",
-  "version": "1.0.0",
-  "main": "index.html",
+  "private": true,
+  "scripts": {
+    "build": "NODE_ENV=production gulp",
+    "dev": "gulp",
+    "clean": "gulp clean",
+    "watch": "gulp watch"
+  },
+  "main": "index.js",
   "repository": "https://github.com/elicik/Website.git",
   "author": "Eli Gukovsky <gukovskye@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "firebase": "^6.1.1",
-    "jquery": "^3.4.1",
-    "mana-font": "^1.4.1",
     "normalize.css": "^8.0.1",
     "pixi.js": "^5.0.4",
     "sweetalert": "^2.1.2",
     "three": "^0.105.2",
     "vue": "^2.6.10"
+  },
+  "devDependencies": {
+    "css-loader": "^3.0.0",
+    "del": "^4.1.1",
+    "glob": "^7.1.4",
+    "gulp": "^4.0.2",
+    "gulp-cli": "^2.2.0",
+    "gulp-ejs": "^4.1.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-sass": "^4.0.2",
+    "node-sass": "^4.12.0",
+    "sass-loader": "^7.1.0",
+    "vue-loader": "^15.7.0",
+    "vue-template-compiler": "^2.6.10",
+    "webpack": "^4.34.0",
+    "webpack-stream": "^5.2.1"
   }
 }
