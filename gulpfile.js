@@ -26,7 +26,6 @@ function clean() {
 }
 
 function html() {
-	// TODO: Get rid of empty script.js files within _header.ejs
 	return gulp.src(paths.ejs, {since: gulp.lastRun(html), base: "src/"})
 		.pipe(ejs({}, {rmWhitespace: true}))
     	.pipe(rename({extname: ".html"}))
