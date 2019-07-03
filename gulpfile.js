@@ -58,11 +58,11 @@ function javascript() {
 					},
 					{
 						test: /\.css$/, 
-						use: ["vue-style-loader", "css-loader"]
+						use: ["vue-style-loader", "css-loader"],
 					},
 					{
 						test: /\.scss$/,
-						use: ["vue-style-loader","css-loader","sass-loader"]
+						use: ["vue-style-loader", "css-loader", "sass-loader"],
 					}
 				]
 			},
@@ -89,6 +89,6 @@ function watch_javascript() {
 	return gulp.watch(paths.js, {ignoreInitial: false}, javascript);
 }
 
-exports.default = gulp.parallel(html, css, javascript, assets, index_assets);
-exports.watch = gulp.series(assets, index_assets, gulp.parallel(watch_html, watch_css, watch_javascript));
+exports.default = gulp.series(gulp.parallel(assets, index_assets), gulp.parallel(html, css, javascript));
+exports.watch = gulp.series(gulp.parallel(assets, index_assets), gulp.parallel(watch_html, watch_css, watch_javascript));
 exports.clean = clean;

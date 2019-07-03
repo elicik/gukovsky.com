@@ -1,8 +1,6 @@
 <template>
 	<div id="app">
-		<div>
-			<p>Programmed and designed as a group effort with Taha Vasowalla. Rewritten with Vue.js by myself in 2019.</p>
-		</div>
+		<p id="TTT-turnText">It is <span id="turn" v-bind:class="turn">{{ turn }}</span>'s turn.</p>
 		<table id="ultimate">
 			<tr v-for="(row, row_num) in grid">
 				<td v-for="(col, col_num) in row">
@@ -15,7 +13,9 @@
 				</td>
 			</tr>
 		</table>
-		<p id="TTT-turnText">It is <span id="turn" v-bind:class="turn">{{ turn }}</span>'s turn.</p>
+		<div>
+			<p>Programmed and designed as a group effort with Taha Vasowalla. Rewritten with Vue.js by myself in 2019.</p>
+		</div>
 	</div>
 </template>
 
