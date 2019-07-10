@@ -47,6 +47,7 @@ function javascript() {
 		.pipe(webpack({
 			entry: entries,
 			mode: NODE_ENV === "production" ? "production" : "development",
+			devtool: "source-map",
 			output: {
 				filename: "[name]",
 			},

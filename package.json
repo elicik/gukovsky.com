@@ -17,7 +17,8 @@
     "@fortawesome/free-regular-svg-icons": "^5.9.0",
     "@fortawesome/free-solid-svg-icons": "^5.9.0",
     "css-loader": "^3.0.0",
-    "del": "^4.1.1",
+    "del": "^5.0.0",
+    "firebase": "^6.2.4",
     "glob": "^7.1.4",
     "gulp": "^4.0.2",
     "gulp-cli": "^2.2.0",
@@ -29,10 +30,12 @@
     "pixi.js": "^5.0.4",
     "sass-loader": "^7.1.0",
     "sweetalert": "^2.1.2",
-    "three": "^0.105.2",
+    "three": "^0.106.2",
     "vue": "^2.6.10",
     "vue-loader": "^15.7.0",
+    "vue-router": "^3.0.7",
     "vue-template-compiler": "^2.6.10",
+    "vuefire": "^2.0.1",
     "webpack": "^4.34.0",
     "webpack-stream": "^5.2.1"
   }

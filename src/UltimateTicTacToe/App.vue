@@ -1,6 +1,6 @@
 <template>
 	<div id="app">
-		<p id="TTT-turnText">It is <span id="turn" v-bind:class="turn">{{ turn }}</span>'s turn.</p>
+		<p id="TTT-turnText">Hello <span v-bind:class="player">{{ player }}</span>. It is <span v-bind:class="game.turn">{{ game.turn === player ? "your" : "not your" }}</span> turn.</p>
 		<table id="ultimate">
 			<tr v-for="(row, row_num) in grid">
 				<td v-for="(col, col_num) in row">
@@ -21,19 +21,66 @@
 
 <script>
 import swal from "sweetalert";
+import { db } from "./db";
+
 let create_blank_grid = function(default_value) {
 	return new Array(3).fill().map(() => new Array(3).fill().map(() => new Array(3).fill().map(() => new Array(3).fill(default_value))));
 };
 
 export default {
+	created: function() {
+		if (this.$route.query) {
+			this.id = this.$route.query.id;
+			this.player = this.$route.query.player;
+			this.$bind("game", db.collection("games").doc(this.id));
+		}
+		else {
+			db.collection("games").add({
+				grid: JSON.stringify(create_blank_grid("")),
+				last_move: [],
+				turn: "X",
+			})
+			.then((docRef) => {
+				this.$router.push({
+					query: {
+						id: docRef.id,
+						player: "X",
+					},
+				});
+				this.id = this.$route.query.id;
+				this.$bind("game", db.collection("games").doc(this.id));
+				// swal({
+				// 	title: "Game over!",
+				// 	text: `${this.game.turn}  won! Congrats!`,
+				// 	icon: "success",
+				// 	buttons: {
+				// 		cancel: false,
+				// 		confirm: "Play again"
+				// 	}
+				// });
+			});
+		}
+	},
 	data: function() {
 		return {
-			turn: "X",
-			grid: create_blank_grid(""),
-			last_move: [],
+			id: "",
+			game: {
+				grid: JSON.stringify(create_blank_grid("")),
+				last_move: [],
+				turn: "X",
+			},
+			player: "X",
 		};
 	},
+	watch: {
+		id: function() {
+			this.$bind("game", db.collection("games").doc(this.id));
+		},
+	},
 	computed: {
+		grid: function() {
+			return JSON.parse(this.game.grid);
+		},
 		big_grid: function() {
 			let result = [["","",""],["","",""],["","",""]];
 			for (let row = 0; row < 3; row++) {
@@ -62,10 +109,13 @@ export default {
 			return result;
 		},
 		possible: function() {
-			if (this.last_move.length === 0) {
+			if (this.player !== this.game.turn) {
+				return create_blank_grid(false);
+			}
+			if (this.game.last_move.length === 0) {
 				return create_blank_grid(true);
 			}
-			if (this.big_grid[this.last_move[2]][this.last_move[3]] !== "") {
+			if (this.big_grid[this.game.last_move[2]][this.game.last_move[3]] !== "") {
 				return this.grid.map((row, row_num) =>
 					row.map((col, col_num) => {
 						if (this.big_grid[row_num][col_num] !== "") {
@@ -83,8 +133,8 @@ export default {
 			}
 			else {
 				let result = create_blank_grid(false);
-				let row = this.last_move[2];
-				let col = this.last_move[3];
+				let row = this.game.last_move[2];
+				let col = this.game.last_move[3];
 				result[row][col] = this.grid[row][col].map(function(i) {
 					return i.map(function(j) {
 						return j === "";
@@ -96,36 +146,44 @@ export default {
 	},
 	methods: {
 		play: function(row, col, i, j) {
-			// Use splice because editing the array directly does not trigger update
-			if (this.grid[row][col][i][j] !== "" || this.big_grid[row][col] !== "") {
+			if (!this.possible[row][col][i][j]) {
 				return;
 			}
-			this.grid[row][col][i].splice(j, 1, this.turn);
-			this.last_move = [row, col, i, j];
-			if(this.winner()) { // Game winner
-				swal({
-					title: "Game over!",
-					text: `${this.turn}  won! Congrats!`,
-					icon: "success",
-					buttons: {
-						cancel: false,
-						confirm: "Play again"
-					}
-				}).then(this.reset);
-			}
-			else if(this.tie()) { // Game tied
-				swal({
-					title: "Game over!",
-					text: "There was a tie!",
-					icon: "info",
-					buttons: {
-						cancel: false,
-						confirm: "Play again"
-					}
-				}).then(this.reset);
-			}
-			this.turn = this.turn === "O" ? "X" : "O";
-
+			// if (this.grid[row][col][i][j] !== "" || this.big_grid[row][col] !== "") {
+			// 	return;
+			// }
+			let grid = JSON.parse(this.game.grid);
+			grid[row][col][i][j] = this.game.turn;
+			db.collection("games").doc(this.id).update({
+				grid: JSON.stringify(grid),
+				last_move: [row, col, i, j],
+				turn: this.game.turn === "O" ? "X" : "O",
+			}).then(() => {
+				if(this.winner()) { // Game winner
+					// Turn = loser
+					let text = this.game.turn === this.player ? "You lost. Better luck next time!" : "You won! Congrats!";
+					swal({
+						title: "Game over!",
+						text: text,
+						icon: "success",
+						buttons: {
+							cancel: false,
+							confirm: "Play again"
+						}
+					}).then(this.reset);
+				}
+				else if(this.tie()) { // Game tied
+					swal({
+						title: "Game over!",
+						text: "There was a tie!",
+						icon: "info",
+						buttons: {
+							cancel: false,
+							confirm: "Play again"
+						}
+					}).then(this.reset);
+				}
+			})
 		},
 		tie: function() {
 			// Assuming winner() is false
@@ -154,8 +212,11 @@ export default {
 			return "";
 		},
 		reset: function() {
-			this.turn = "X";
-			this.grid = create_blank_grid("");
+			db.collection("games").doc(this.id).update({
+				grid: JSON.stringify(create_blank_grid("")),
+				last_move: [],
+				turn: "X",
+			});
 		}
 	},
 }
@@ -165,11 +226,11 @@ export default {
 $red-color: #FF7B64;
 $blue-color: #647BFF;
 
-#turn.X {
+span.X {
 	color: $red-color;
 }
 
-#turn.O {
+span.O {
 	color: $blue-color;
 }
 
