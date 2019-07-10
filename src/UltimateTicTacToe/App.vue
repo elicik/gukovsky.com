@@ -29,7 +29,7 @@ let create_blank_grid = function(default_value) {
 
 export default {
 	created: function() {
-		if (this.$route.query) {
+		if (this.$route.query.id && this.$route.query.player) {
 			this.id = this.$route.query.id;
 			this.player = this.$route.query.player;
 			this.$bind("game", db.collection("games").doc(this.id));
@@ -48,16 +48,18 @@ export default {
 					},
 				});
 				this.id = this.$route.query.id;
-				this.$bind("game", db.collection("games").doc(this.id));
-				// swal({
-				// 	title: "Game over!",
-				// 	text: `${this.game.turn}  won! Congrats!`,
-				// 	icon: "success",
-				// 	buttons: {
-				// 		cancel: false,
-				// 		confirm: "Play again"
-				// 	}
-				// });
+				return this.$bind("game", db.collection("games").doc(this.id));
+			})
+			.then(() => {
+				let url = window.location.href.replace("player=X", "player=O");
+				return navigator.clipboard.writeText(url);
+			})
+			.then(() => {
+				swal({
+					title: "URL saved to your clipboard",
+					text: "Share it with your friend!",
+					icon: "info",
+				});
 			});
 		}
 	},
@@ -73,9 +75,30 @@ export default {
 		};
 	},
 	watch: {
-		id: function() {
-			this.$bind("game", db.collection("games").doc(this.id));
-		},
+		game: function() {
+			swal.close();
+			if (this.winner) {
+				let text = this.winner === this.player ? "You won! Congrats!" : "You lost. Better luck next time!";
+				swal({
+					title: "Game over!",
+					text: text,
+					icon: "success",
+					buttons: {
+						confirm: "Play again"
+					}
+				}).then(this.reset);
+			}
+			else if(this.tie) {
+				swal({
+					title: "Game over!",
+					text: "There was a tie!",
+					icon: "info",
+					buttons: {
+						confirm: "Play again"
+					}
+				}).then(this.reset);
+			}
+		}
 	},
 	computed: {
 		grid: function() {
@@ -142,52 +165,6 @@ export default {
 				});
 				return result;
 			}
-		}
-	},
-	methods: {
-		play: function(row, col, i, j) {
-			if (!this.possible[row][col][i][j]) {
-				return;
-			}
-			// if (this.grid[row][col][i][j] !== "" || this.big_grid[row][col] !== "") {
-			// 	return;
-			// }
-			let grid = JSON.parse(this.game.grid);
-			grid[row][col][i][j] = this.game.turn;
-			db.collection("games").doc(this.id).update({
-				grid: JSON.stringify(grid),
-				last_move: [row, col, i, j],
-				turn: this.game.turn === "O" ? "X" : "O",
-			}).then(() => {
-				if(this.winner()) { // Game winner
-					// Turn = loser
-					let text = this.game.turn === this.player ? "You lost. Better luck next time!" : "You won! Congrats!";
-					swal({
-						title: "Game over!",
-						text: text,
-						icon: "success",
-						buttons: {
-							cancel: false,
-							confirm: "Play again"
-						}
-					}).then(this.reset);
-				}
-				else if(this.tie()) { // Game tied
-					swal({
-						title: "Game over!",
-						text: "There was a tie!",
-						icon: "info",
-						buttons: {
-							cancel: false,
-							confirm: "Play again"
-						}
-					}).then(this.reset);
-				}
-			})
-		},
-		tie: function() {
-			// Assuming winner() is false
-			return !this.big_grid.flat().some(x => x === "");
 		},
 		winner: function() {
 			for (let player of ["X", "O"]) {
@@ -209,7 +186,25 @@ export default {
 					return player;
 				}
 			}
-			return "";
+			return false;
+		},
+		tie: function() {
+			// Assuming winner() is false
+			return !this.winner && !this.big_grid.flat().some(x => x === "");
+		},
+	},
+	methods: {
+		play: function(row, col, i, j) {
+			if (!this.possible[row][col][i][j]) {
+				return;
+			}
+			let grid = JSON.parse(this.game.grid);
+			grid[row][col][i][j] = this.game.turn;
+			db.collection("games").doc(this.id).update({
+				grid: JSON.stringify(grid),
+				last_move: [row, col, i, j],
+				turn: this.game.turn === "O" ? "X" : "O",
+			});
 		},
 		reset: function() {
 			db.collection("games").doc(this.id).update({
