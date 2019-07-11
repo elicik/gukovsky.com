@@ -23,7 +23,7 @@
 import swal from "sweetalert";
 import { db } from "./db";
 
-let create_blank_grid = function(default_value) {
+let blank_grid = function(default_value) {
 	return new Array(3).fill().map(() => new Array(3).fill().map(() => new Array(3).fill().map(() => new Array(3).fill(default_value))));
 };
 
@@ -36,7 +36,7 @@ export default {
 		}
 		else {
 			db.collection("games").add({
-				grid: JSON.stringify(create_blank_grid("")),
+				grid: JSON.stringify(blank_grid("")),
 				last_move: [],
 				turn: "X",
 			})
@@ -67,7 +67,7 @@ export default {
 		return {
 			id: "",
 			game: {
-				grid: JSON.stringify(create_blank_grid("")),
+				grid: JSON.stringify(blank_grid("")),
 				last_move: [],
 				turn: "X",
 			},
@@ -76,13 +76,14 @@ export default {
 	},
 	watch: {
 		game: function() {
-			swal.close();
+			if (this.game.grid === JSON.stringify(blank_grid(""))) {
+				swal.close();
+			}
 			if (this.winner) {
-				let text = this.winner === this.player ? "You won! Congrats!" : "You lost. Better luck next time!";
 				swal({
 					title: "Game over!",
-					text: text,
-					icon: "success",
+					text: this.winner === this.player ? "You won! Congrats!" : "You lost. Better luck next time!",
+					icon: this.winner === this.player ? "success" : "error",
 					buttons: {
 						confirm: "Play again"
 					}
@@ -98,7 +99,7 @@ export default {
 					}
 				}).then(this.reset);
 			}
-		}
+		},
 	},
 	computed: {
 		grid: function() {
@@ -132,11 +133,8 @@ export default {
 			return result;
 		},
 		possible: function() {
-			if (this.player !== this.game.turn) {
-				return create_blank_grid(false);
-			}
 			if (this.game.last_move.length === 0) {
-				return create_blank_grid(true);
+				return blank_grid(true);
 			}
 			if (this.big_grid[this.game.last_move[2]][this.game.last_move[3]] !== "") {
 				return this.grid.map((row, row_num) =>
@@ -155,7 +153,7 @@ export default {
 				);
 			}
 			else {
-				let result = create_blank_grid(false);
+				let result = blank_grid(false);
 				let row = this.game.last_move[2];
 				let col = this.game.last_move[3];
 				result[row][col] = this.grid[row][col].map(function(i) {
@@ -195,7 +193,7 @@ export default {
 	},
 	methods: {
 		play: function(row, col, i, j) {
-			if (!this.possible[row][col][i][j]) {
+			if (!this.possible[row][col][i][j] || this.player !== this.game.turn) {
 				return;
 			}
 			let grid = JSON.parse(this.game.grid);
@@ -208,7 +206,7 @@ export default {
 		},
 		reset: function() {
 			db.collection("games").doc(this.id).update({
-				grid: JSON.stringify(create_blank_grid("")),
+				grid: JSON.stringify(blank_grid("")),
 				last_move: [],
 				turn: "X",
 			});
