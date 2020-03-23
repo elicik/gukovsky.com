@@ -25,7 +25,6 @@
     "gulp-ejs": "^5.0.0",
     "gulp-rename": "^2.0.0",
     "gulp-sass": "^4.0.2",
-    "minimist": "^1.2.5",
     "node-sass": "^4.13.1",
     "normalize.css": "^8.0.1",
     "pixi.js": "^5.2.1",
@@ -39,8 +38,5 @@
     "vuefire": "^2.2.2",
     "webpack": "^4.42.0",
     "webpack-stream": "^5.2.1"
-  },
-  "resolutions": {
-    "minimist": "^1.2.5"
   }
 }
