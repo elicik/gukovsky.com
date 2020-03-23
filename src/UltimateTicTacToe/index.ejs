@@ -6,11 +6,11 @@ var rules = "http://mathwithbaddrawings.com/2013/06/16/ultimate-tic-tac-toe";
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<%- include ../_header.ejs %>
+		<%- include("../_header", {title, description}) %>
 	</head>
 	<body>
 		<div id="app">
 		</div>
-		<%- include ../_footer.ejs %>
+		<%- include("../_footer", {rules}) %>
 	</body>
 </html>

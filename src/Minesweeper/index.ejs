@@ -5,7 +5,7 @@ var description = "Minesweeper made in pure JavaScript";
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<%- include ../_header.ejs %>
+		<%- include("../_header", {title, description}) %>
 	</head>
 	<body id="size-20">
 		<div id="xyzzy"></div>
@@ -60,6 +60,6 @@ var description = "Minesweeper made in pure JavaScript";
 				</div>
 			</div>
 		</div>
-		<%- include ../_footer.ejs %>
+		<%- include("../_footer") %>
 	</body>
 </html>

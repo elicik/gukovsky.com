@@ -6,7 +6,7 @@ var rules = "http://www.web-games-online.com/mastermind/rules.php";
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<%- include ../_header.ejs %>
+		<%- include("../_header", {title, description}) %>
 	</head>
 	<body>
 		<div id="mastermind">
@@ -113,6 +113,6 @@ var rules = "http://www.web-games-online.com/mastermind/rules.php";
 				</div>
 			</div>
 		</div>
-		<%- include ../_footer.ejs %>
+		<%- include("../_footer", {rules}) %>
 	</body>
 </html>
