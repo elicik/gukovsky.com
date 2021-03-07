@@ -5,10 +5,12 @@ const ejs = require("gulp-ejs");
 const rename = require("gulp-rename");
 const glob = require("glob");
 const del = require("del");
+const handler = require("serve-handler");
+const http = require("http");
 
 // Webpack
-const webpack = require("webpack-stream");
-const VueLoaderPlugin = require("vue-loader/lib/plugin");
+const webpack = require("webpack");
+const webpackStream = require("webpack-stream");
 
 const paths = {
 	ejs: "src/**/index.ejs",
@@ -44,7 +46,7 @@ function javascript() {
 		entries[output] = "./" + filepath;
 	}
 	return gulp.src(paths.js, {since: gulp.lastRun(javascript), base: "src/"})
-		.pipe(webpack({
+		.pipe(webpackStream({
 			entry: entries,
 			mode: NODE_ENV === "production" ? "production" : "development",
 			devtool: NODE_ENV === "production" ? false : "source-map",
@@ -54,21 +56,16 @@ function javascript() {
 			module: {
 				rules: [
 					{
-						test: /\.vue$/,
-						use: "vue-loader",
-					},
-					{
 						test: /\.css$/, 
-						use: ["vue-style-loader", "css-loader"],
+						use: ["css-loader"],
 					},
 					{
 						test: /\.scss$/,
-						use: ["vue-style-loader", "css-loader", "sass-loader"],
+						use: ["css-loader", "sass-loader"],
 					}
 				]
 			},
-			plugins: [new VueLoaderPlugin()],
-		}))
+		}, webpack))
 		.pipe(gulp.dest("./dist"))
 }
 function assets() {
@@ -90,6 +87,19 @@ function watch_javascript() {
 	return gulp.watch(paths.js, {ignoreInitial: false}, javascript);
 }
 
-exports.default = gulp.series(gulp.parallel(assets, index_assets), gulp.parallel(html, css, javascript));
-exports.watch = gulp.series(gulp.parallel(assets, index_assets), gulp.parallel(watch_html, watch_css, watch_javascript));
+const server = http.createServer((req, res) => {
+	return handler(req, res, {
+		public: "dist/"
+	});
+})
+
+function serve() {
+	return server.listen(5000, () => {
+		console.log("Running server on http://localhost:5000");
+	});
+}
+
+exports.default = gulp.series(clean, gulp.parallel(assets, index_assets), gulp.parallel(html, css, javascript));
+exports.watch = gulp.series(clean, gulp.parallel(assets, index_assets), gulp.parallel(watch_html, watch_css, watch_javascript));
 exports.clean = clean;
+exports.dev = gulp.series(clean, gulp.parallel(assets, index_assets), gulp.parallel(watch_html, watch_css, watch_javascript, serve));
