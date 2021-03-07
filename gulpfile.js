@@ -1,19 +1,20 @@
 const gulp = require("gulp");
 const sass = require("gulp-sass");
 sass.compiler = require("node-sass");
-const ejs = require("gulp-ejs");
 const rename = require("gulp-rename");
 const glob = require("glob");
 const del = require("del");
 const handler = require("serve-handler");
 const http = require("http");
+const pug = require("pug");
+const gulp_pug = require("gulp-pug");
 
 // Webpack
 const webpack = require("webpack");
 const webpackStream = require("webpack-stream");
 
 const paths = {
-	ejs: "src/**/index.ejs",
+	pug: "src/**/index.pug",
 	scssPartials: "src/**/_*.scss",
 	scss: "src/**/style.scss",
 	js: "src/**/script.js",
@@ -28,9 +29,8 @@ function clean() {
 }
 
 function html() {
-	return gulp.src(paths.ejs, {since: gulp.lastRun(html), base: "src/"})
-		.pipe(ejs({}, {rmWhitespace: true}))
-    	.pipe(rename({extname: ".html"}))
+	return gulp.src(paths.pug, {since: gulp.lastRun(html), base: "src/"})
+		.pipe(gulp_pug({pug: pug}))
 		.pipe(gulp.dest("./dist"))
 }
 function css() {
@@ -78,7 +78,7 @@ function index_assets() {
 }
 
 function watch_html() {
-	return gulp.watch(paths.ejs, {ignoreInitial: false}, html);
+	return gulp.watch(paths.pug, {ignoreInitial: false}, html);
 }
 function watch_css() {
 	return gulp.watch(paths.scss, {ignoreInitial: false}, css);

@@ -1,0 +1,29 @@
+mixin head(title, description, path=false, defer=false)
+	title= title
+	meta(charset="utf-8")
+	meta(name="viewport" content="width=device-width, initial-scale=1")
+	meta(name="description" content=description)
+	meta(property="og:title" content=title)
+	meta(property="og:type" content="website")
+	- let url = "http://www.gukovsky.com/" + (path === false ? title.split(" ").join("").split("-").join("") : path)
+	meta(property="og:url" content=url)
+	meta(property="og:image" content="http://www.gukovsky.com/logo.png")
+	meta(property="og:description" content=description)
+	link(rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png")
+	link(rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32")
+	link(rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16")
+	link(rel="manifest" href="/manifest.json")
+	link(rel="mask-icon" href="/safari-pinned-tab.svg" color="#000000")
+	meta(name="theme-color" content="#ffffff")
+	link(href="style.css" rel="stylesheet")
+	if defer
+		script(src="script.js" defer)
+	else
+		script(src="script.js")
+
+mixin footer(rules=false)
+	if rules !== false
+		#rules
+			a(target="_blank" href=rules)
+	#return-to-home
+		a(href="../") Eli Gukovsky

@@ -1,0 +1,13 @@
+include ../mixins
+
+doctype html
+html(lang="en")
+	head
+		+head("Rubiks Cube", "A Rubiks Cube made with three.js")
+	body
+		#rubikscube
+		#buttons
+			for side in ["F", "B", "L", "R", "U", "D", "M", "S", "E", "x", "y", "z"]
+				button(data-side=side)= side
+				button(data-side=side data-prime)= side + "'"
+		+footer()
