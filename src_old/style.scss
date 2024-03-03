@@ -1,0 +1,50 @@
+@import "global";
+
+/* ugh tables */
+#wrapper {
+    display: table;
+    height: 100%;
+    width: 100%;
+}
+#cell {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
+#content {
+    margin: auto;
+    display: inline-block;
+    text-align: left;
+    padding: 24px;
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-weight: normal;
+    }
+    p {
+        font-size: 17px;
+        margin: 5px 0 10px 10px;
+        padding: 0px;
+    }
+}
+
+#footer {
+    text-align: center;
+    padding-top: 24px;
+    a {
+        transition: 0.25s;
+        opacity: 0.6;
+        &:hover {
+            opacity: 1;
+        }
+    }
+    svg {
+        height: 48px;
+        width: 48px;
+        margin: 4px;
+    }
+}

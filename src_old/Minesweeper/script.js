@@ -1,4 +1,4 @@
-import Swal from "sweetalert2";
+import swal from "sweetalert";
 
 // Settings
 let width;
@@ -290,7 +290,7 @@ function win() {
         (selectedDifficulty.getHighscore() === null ||
             parseInt(selectedDifficulty.getHighscore(), 10) > clock)
     ) {
-        Swal.fire({
+        swal({
             title: "Congrats!",
             text: "You got a highscore of " + clock + "!",
             icon: "success",

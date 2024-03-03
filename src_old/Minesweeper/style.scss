@@ -1,3 +1,5 @@
+@import "../global";
+
 $bordercolor: #7b7b7b;
 $backgroundcolor: #bdbdbd;
 
@@ -78,7 +80,6 @@ $backgroundcolor: #bdbdbd;
 #minesweeper {
     margin: 0 auto;
     border-spacing: 0px;
-    border-collapse: separate;
     border-top: 2px solid white;
     border-left: 2px solid white;
     border-bottom: 2px solid $bordercolor;

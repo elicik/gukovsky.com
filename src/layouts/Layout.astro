@@ -1,0 +1,86 @@
+---
+import "@/styles/globals.css";
+
+interface Props {
+    title: string;
+    description: string;
+    homepage?: boolean;
+    rules?: string | undefined;
+}
+
+const { title, description, homepage = false, rules } = Astro.props;
+
+let url = "http://www.gukovsky.com/";
+if (!homepage) {
+    url += title.split(" ").join("").split("-").join("");
+}
+---
+
+<html lang="en" class="h-full">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content={description} />
+        <meta name="generator" content={Astro.generator} />
+        <meta property="og:title" content={title} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={url} />
+        <meta property="og:image" content="http://www.gukovsky.com/logo.png" />
+        <meta property="og:description" content={description} />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/apple-touch-icon.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            href="/favicon-32x32.png"
+            sizes="32x32"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            href="/favicon-16x16.png"
+            sizes="16x16"
+        />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#000000" />
+        <meta name="theme-color" content="#ffffff" />
+        <title>{title}</title>
+    </head>
+    <body class="min-h-full font-sans shadow-inner p-6">
+        <slot />
+        {
+            homepage ? (
+                ""
+            ) : (
+                <div class="fixed top-0 left-0 p-3">
+                    <a href="../">Eli Gukovsky</a>
+                </div>
+            )
+        }
+        {
+            rules ? (
+                <div class="fixed float-right top-0 right-0 p-3">
+                    <a href={rules} target="_blank">
+                        Rules
+                    </a>
+                </div>
+            ) : (
+                ""
+            )
+        }
+
+        <!-- <style is:global>
+            a {
+                color: blue;
+                text-decoration: none;
+            }
+            a:hover {
+                color: red;
+            }
+        </style> -->
+    </body>
+</html>
