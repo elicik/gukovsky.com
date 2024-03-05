@@ -1,0 +1,50 @@
+---
+import Layout from "@layouts/Layout.astro";
+import "../Minesweeper/style.scss";
+import { Button } from "@/components/ui/button";
+---
+
+<Layout title="Rubik's Cube" description="A Rubiks Cube made with three.js">
+    <div class="flex justify-center fixed left-0 right-0 bottom-0">
+        <div id="buttons" class="w-80 grid grid-cols-6">
+            {
+                [
+                    "F",
+                    "B",
+                    "L",
+                    "R",
+                    "U",
+                    "D",
+                    "M",
+                    "S",
+                    "E",
+                    "x",
+                    "y",
+                    "z",
+                ].map((side) => (
+                    <>
+                        <Button
+                            className="m-1"
+                            size="icon"
+                            data-side={side}
+                            client:load
+                        >
+                            {side}
+                        </Button>
+                        <Button
+                            className="m-1"
+                            size="icon"
+                            data-side={side}
+                            data-prime
+                            client:load
+                        >
+                            {side + "'"}
+                        </Button>
+                    </>
+                ))
+            }
+        </div>
+    </div>
+    <div id="rubikscube" class="h-full w-full"></div>
+    <script src="../RubiksCube/script.js"></script>
+</Layout>
