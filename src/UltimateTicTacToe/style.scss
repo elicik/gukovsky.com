@@ -1,0 +1,140 @@
+$red-color: #ff7b64;
+$blue-color: #647bff;
+
+span.X {
+    color: $red-color;
+}
+
+span.O {
+    color: $blue-color;
+}
+
+#app {
+    text-align: center;
+    padding: 24px;
+}
+
+#ultimate {
+    margin: auto;
+    td {
+        box-sizing: content-box;
+    }
+}
+
+table {
+    border-collapse: collapse;
+
+    table {
+        margin: 10px;
+
+        td {
+            height: 50px;
+            width: 50px;
+            text-align: center;
+
+            &:after {
+                content: "";
+                display: inline-block;
+                position: relative;
+                top: 2px;
+                left: 0;
+                background-color: white;
+                border-radius: 2px;
+                width: 0px;
+                height: 0px;
+                transition: 0.2s linear;
+            }
+        }
+    }
+}
+
+.possible {
+    cursor: pointer;
+
+    &:after {
+        background-color: #fff98c;
+        width: 45px;
+        height: 45px;
+        animation: blink 2s infinite;
+    }
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.X:after {
+    background-color: $red-color;
+    width: 45px;
+    height: 45px;
+}
+
+.O:after {
+    background-color: $blue-color;
+    width: 45px;
+    height: 45px;
+}
+
+table.X {
+    background-color: lighten($red-color, 17);
+    border-radius: 5px;
+}
+
+table.O {
+    background-color: lighten($blue-color, 17);
+    border-radius: 5px;
+}
+
+#ultimate tr > td:nth-child(2) {
+    border-left: 3px solid #555;
+    border-right: 3px solid #555;
+}
+
+#ultimate tr:nth-child(2) > td {
+    border-top: 3px solid #555;
+    border-bottom: 3px solid #555;
+}
+
+#ultimate table td:nth-child(2) {
+    border-left-width: 1px;
+    border-right-width: 1px;
+}
+
+#ultimate table tr:nth-child(2) > td {
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+}
+
+@media (max-width: 568px) {
+    #ultimate table {
+        margin: 5px;
+
+        td {
+            height: 25px;
+            width: 25px;
+        }
+    }
+
+    .possible:after {
+        width: 20px;
+        height: 20px;
+    }
+
+    .X:after {
+        width: 20px;
+        height: 20px;
+    }
+
+    .O:after {
+        width: 20px;
+        height: 20px;
+    }
+}
