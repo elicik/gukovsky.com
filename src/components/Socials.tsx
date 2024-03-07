@@ -5,25 +5,29 @@ import { Button } from "@/components/ui/button";
 export default function Socials() {
     let socialMap = [
         {
+            name: "Github",
             link: "http://www.github.com/elicik",
             Icon: SiGithub,
         },
         {
+            name: "LinkedIn",
             link: "http://www.linkedin.com/in/elicik",
             Icon: SiLinkedin,
         },
         {
+            name: "Email",
             link: "mailto:gukovskye@gmail.com",
             Icon: SiGmail,
         },
     ];
     return (
         <div className="flex justify-center">
-            {socialMap.map(({ link, Icon }) => (
+            {socialMap.map(({ name, link, Icon }) => (
                 <Button
                     asChild
                     className="h-20 w-20 mx-4 mt-6"
                     variant="outline"
+                    key={name}
                 >
                     <a href={link}>
                         <Icon className="h-full w-full" color="default" />

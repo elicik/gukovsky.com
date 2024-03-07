@@ -249,28 +249,32 @@ function render() {
     renderer.render(scene, camera);
 }
 
-document.addEventListener("DOMContentLoaded", function (event) {
-    // EVENT LISTENERS
-    window.addEventListener("resize", function (event) {
+document.addEventListener("astro:page-load", function (event) {
+    if (event.target.title === "Rubik's Cube") {
+        // EVENT LISTENERS
+        window.addEventListener("resize", function (event) {
+            renderer.setSize(
+                document.getElementById("rubikscube").offsetWidth,
+                Math.floor(
+                    document.getElementById("rubikscube").offsetWidth / 2,
+                ),
+            );
+        });
+
+        for (let button of document.querySelectorAll("#buttons button")) {
+            button.addEventListener("click", function (event) {
+                rotate(
+                    event.target.dataset.side,
+                    event.target.dataset.prime === "",
+                );
+            });
+        }
+
         renderer.setSize(
             document.getElementById("rubikscube").offsetWidth,
             Math.floor(document.getElementById("rubikscube").offsetWidth / 2),
         );
-    });
-
-    for (let button of document.querySelectorAll("#buttons button")) {
-        button.addEventListener("click", function (event) {
-            rotate(
-                event.target.dataset.side,
-                event.target.dataset.prime === "",
-            );
-        });
+        document.getElementById("rubikscube").appendChild(renderer.domElement);
+        render();
     }
-
-    renderer.setSize(
-        document.getElementById("rubikscube").offsetWidth,
-        Math.floor(document.getElementById("rubikscube").offsetWidth / 2),
-    );
-    document.getElementById("rubikscube").appendChild(renderer.domElement);
-    render();
 });

@@ -42,15 +42,15 @@ $backgroundcolor: #bdbdbd;
 #smiley {
     background-position: center center;
     background-repeat: no-repeat;
-    background-image: url("assets/facesmile.png");
+    background-image: url("/Minesweeper/assets/facesmile.png");
     &[data-ooh="true"] {
-        background-image: url("assets/faceooh.png");
+        background-image: url("/Minesweeper/assets/faceooh.png");
     }
     &[data-dead="true"] {
-        background-image: url("assets/facedead.png");
+        background-image: url("/Minesweeper/assets/facedead.png");
     }
     &[data-win="true"] {
-        background-image: url("assets/facewin.png");
+        background-image: url("/Minesweeper/assets/facewin.png");
     }
     margin: 0 auto;
     border-top: 2px solid white;
@@ -94,11 +94,11 @@ $backgroundcolor: #bdbdbd;
         cursor: default;
         &[data-flagged="true"] {
             // flagged
-            background-image: url("assets/flag.png");
+            background-image: url("/Minesweeper/assets/flag.png");
         }
         &[data-hint="true"] {
             // hint
-            background-image: url("assets/hint.png");
+            background-image: url("/Minesweeper/assets/hint.png");
         }
 
         &[data-activated="true"] {
@@ -108,16 +108,16 @@ $backgroundcolor: #bdbdbd;
             border-right: 0;
             &[data-bomb="true"] {
                 // bomb
-                background-image: url("assets/bomb.png");
+                background-image: url("/Minesweeper/assets/bomb.png");
             }
             &[data-death-bomb="true"] {
                 // death bomb
-                background-image: url("assets/bomb.png");
+                background-image: url("/Minesweeper/assets/bomb.png");
                 background-color: red;
             }
             &[data-flagged="true"] {
                 // misflagged
-                background-image: url("assets/misflag.png");
+                background-image: url("/Minesweeper/assets/misflag.png");
             }
             &[data-surrounding="1"] {
                 color: blue;
@@ -183,9 +183,12 @@ $backgroundcolor: #bdbdbd;
 
 // Preload images to not lag when clicking cells
 body:after {
-    content: url(assets/bomb.png) url(assets/flag.png) url(assets/hint.png)
-        url(assets/misflag.png) url(assets/facesmile.png)
-        url(assets/faceooh.png) url("assets/facedead.png")
-        url("assets/facewin.png");
+    content: url("/Minesweeper/assets/bomb.png")
+        url("/Minesweeper/assets/flag.png") url("/Minesweeper/assets/hint.png")
+        url("/Minesweeper/assets/misflag.png")
+        url("/Minesweeper/assets/facesmile.png")
+        url("/Minesweeper/assets/faceooh.png")
+        url("/Minesweeper/assets/facedead.png")
+        url("/Minesweeper/assets/facewin.png");
     display: none;
 }

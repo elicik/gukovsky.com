@@ -599,62 +599,64 @@ function applyOptions() {
             : "None yet!";
 }
 
-document.addEventListener("DOMContentLoaded", function (event) {
-    // MAIN
-    document.querySelector("#smiley").addEventListener("click", newGame);
+document.addEventListener("astro:page-load", function (event) {
+    if (event.target.title === "Minesweeper") {
+        // MAIN
+        document.querySelector("#smiley").addEventListener("click", newGame);
 
-    // Prevent right clicks from interfering
-    document
-        .querySelector("#minesweeper")
-        .addEventListener("contextmenu", function (event) {
-            event.preventDefault();
-            return false;
-        });
+        // Prevent right clicks from interfering
+        document
+            .querySelector("#minesweeper")
+            .addEventListener("contextmenu", function (event) {
+                event.preventDefault();
+                return false;
+            });
 
-    // Use localstorage to store options
-    if (localStorage.getItem("minesweeper-size") !== null) {
-        applyOptions();
-        document.querySelector("#size").value =
-            localStorage.getItem("minesweeper-size");
-        document.querySelector("#difficulty").value = localStorage.getItem(
-            "minesweeper-difficulty",
-        );
-        document.querySelector("#oldfashioned").checked =
-            localStorage.getItem("minesweeper-oldfashioned") === "true";
-        document.querySelector("#hints").checked =
-            localStorage.getItem("minesweeper-hints") === "true";
-    } else {
-        setOptions();
+        // Use localstorage to store options
+        if (localStorage.getItem("minesweeper-size") !== null) {
+            applyOptions();
+            document.querySelector("#size").value =
+                localStorage.getItem("minesweeper-size");
+            document.querySelector("#difficulty").value = localStorage.getItem(
+                "minesweeper-difficulty",
+            );
+            document.querySelector("#oldfashioned").checked =
+                localStorage.getItem("minesweeper-oldfashioned") === "true";
+            document.querySelector("#hints").checked =
+                localStorage.getItem("minesweeper-hints") === "true";
+        } else {
+            setOptions();
+        }
+
+        // Bottom bar options
+        document
+            .querySelector("#size")
+            .addEventListener("change", function (event) {
+                setOptions();
+                applyOptions();
+            });
+        document
+            .querySelector("#difficulty")
+            .addEventListener("change", function (event) {
+                setOptions();
+                applyOptions();
+                newGame();
+            });
+        document
+            .querySelector("#oldfashioned")
+            .addEventListener("change", function (event) {
+                setOptions();
+                applyOptions();
+            });
+        document
+            .querySelector("#hints")
+            .addEventListener("change", function (event) {
+                clearAllHints();
+                setOptions();
+                applyOptions();
+            });
+
+        // Start the game!
+        newGame();
     }
-
-    // Bottom bar options
-    document
-        .querySelector("#size")
-        .addEventListener("change", function (event) {
-            setOptions();
-            applyOptions();
-        });
-    document
-        .querySelector("#difficulty")
-        .addEventListener("change", function (event) {
-            setOptions();
-            applyOptions();
-            newGame();
-        });
-    document
-        .querySelector("#oldfashioned")
-        .addEventListener("change", function (event) {
-            setOptions();
-            applyOptions();
-        });
-    document
-        .querySelector("#hints")
-        .addEventListener("change", function (event) {
-            clearAllHints();
-            setOptions();
-            applyOptions();
-        });
-
-    // Start the game!
-    newGame();
 });
