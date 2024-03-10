@@ -1,0 +1,54 @@
+---
+import Layout from "@layouts/Layout.astro";
+
+let colors = ["red", "orange", "yellow", "green", "blue", "purple"];
+import "../Mastermind/style.scss";
+import { Button } from "@/components/ui/button";
+---
+
+<Layout
+    title="Mastermind"
+    description="Mastermind made in Vanilla JavaScript"
+    rules="http://www.web-games-online.com/mastermind/rules.php"
+>
+    <div id="mastermind">
+        <h1 id="mode"></h1>
+        <div id="key-mode">
+            <div id="key">
+                {
+                    [...Array(4).keys()].map(() => (
+                        <div class="color-selector">
+                            <div class="dropdown">
+                                {colors.map((color) => (
+                                    <div data-color={color} />
+                                ))}
+                            </div>
+                            <div class="preview" />
+                        </div>
+                    ))
+                }
+            </div>
+            <Button name="submitKey" client:load>Set Key</Button>
+        </div>
+        <div id="guess-mode">
+            <div id="guess">
+                {
+                    [...Array(4).keys()].map(() => (
+                        <div class="color-selector">
+                            <div class="dropdown">
+                                {colors.map((color) => (
+                                    <div data-color={color} />
+                                ))}
+                            </div>
+                            <div class="preview" />
+                        </div>
+                    ))
+                }
+            </div>
+            <Button name="submitGuess" client:load>Confirm guess</Button>
+            <h4 id="history-header"></h4>
+            <div id="history"></div>
+        </div>
+    </div>
+    <script src="../Mastermind/script.js"></script>
+</Layout>
