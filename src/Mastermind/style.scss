@@ -1,3 +1,5 @@
+@use "sass:math";
+
 $red: #e74c3c;
 $orange: #e67e22;
 $yellow: #f1c40f;
@@ -8,7 +10,7 @@ $purple: #9b59b6;
 $right: #f08080;
 $wrong: #999999;
 
-$color-size: 48;
+$color-size: 48px;
 
 #mastermind {
     text-align: center;
@@ -16,11 +18,11 @@ $color-size: 48;
 .color-selector {
     margin: 8px 4px;
     display: inline-block;
-    width: #{$color-size}px;
-    height: #{$color-size}px;
+    width: $color-size;
+    height: $color-size;
     .preview {
-        height: #{$color-size}px;
-        width: #{$color-size}px;
+        height: $color-size;
+        width: $color-size;
         &:hover {
             border: 2px solid black;
         }
@@ -30,8 +32,8 @@ $color-size: 48;
 
         div {
             float: left;
-            height: #{$color-size / 2}px;
-            width: #{$color-size / 3}px;
+            height: math.div($color-size, 2);
+            width: math.div($color-size, 3);
             &:hover {
                 border: 2px solid black;
             }
@@ -65,15 +67,15 @@ div {
 }
 
 .square {
-    width: #{$color-size}px;
-    height: #{$color-size}px;
+    width: $color-size;
+    height: $color-size;
     display: inline-block;
 }
 .minisquare {
     float: left;
-    width: #{$color-size / 3}px;
-    height: #{$color-size / 3}px;
-    margin: #{$color-size / 12}px;
+    width: math.div($color-size, 3);
+    height: math.div($color-size, 3);
+    margin: math.div($color-size, 12);
     &.right {
         background-color: $right;
     }

@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
     rules="http://www.web-games-online.com/mastermind/rules.php"
 >
     <div id="mastermind">
-        <h1 id="mode"></h1>
+        <h1 id="mode" class="py-4 text-3xl"></h1>
         <div id="key-mode">
             <div id="key">
                 {
@@ -46,7 +46,7 @@ import { Button } from "@/components/ui/button";
                 }
             </div>
             <Button name="submitGuess" client:load>Confirm guess</Button>
-            <h4 id="history-header"></h4>
+            <h4 id="history-header" class="py-4 text-lg"></h4>
             <div id="history"></div>
         </div>
     </div>
