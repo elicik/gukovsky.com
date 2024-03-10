@@ -924,7 +924,7 @@ async function render() {
 /**
  * RUN!
  */
-let first = true;
+let initialLoad = true;
 document.addEventListener("astro:page-load", async function (event) {
     if (event.target.title === "Tetris") {
         // Use localstorage to store options
@@ -953,7 +953,7 @@ document.addEventListener("astro:page-load", async function (event) {
                 localStorage.setItem("tetris-startingLevel", startingLevel);
             });
 
-        if (first) {
+        if (initialLoad) {
             await app.init({
                 width: CANVAS_WIDTH,
                 height: CANVAS_HEIGHT,
@@ -962,7 +962,7 @@ document.addEventListener("astro:page-load", async function (event) {
             await Assets.init({ manifest: assetsManifest });
             await Assets.loadBundle("blocks");
             await Assets.loadBundle("tetrominos");
-            first = false;
+            initialLoad = false;
         }
 
         document

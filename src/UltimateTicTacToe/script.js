@@ -15,7 +15,6 @@ let firebaseConfig = {
 
 let firebaseApp = initializeApp(firebaseConfig);
 let db = getFirestore(firebaseApp);
-let first = true;
 
 let state = {
     id: "",
@@ -323,11 +322,12 @@ async function update() {
     updateHTML();
 }
 
+let initialLoad = true;
 document.addEventListener("astro:page-load", function (event) {
     if (event.target.title === "Ultimate Tic-Tac-Toe") {
-        if (first) {
+        if (initialLoad) {
             initialize();
-            first = false;
+            initialLoad = false;
         } else {
             createHTML();
             updateHTML();
