@@ -25,7 +25,7 @@ export default function Socials() {
             {socialMap.map(({ name, link, Icon }) => (
                 <Button
                     asChild
-                    className="h-20 w-20 mx-4 mt-6"
+                    className="mx-4 mt-6 h-20 w-20"
                     variant="outline"
                     key={name}
                 >

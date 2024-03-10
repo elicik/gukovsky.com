@@ -52,13 +52,13 @@ if (!homepage) {
         <title>{title}</title>
         <ViewTransitions />
     </head>
-    <body class="min-h-full font-sans shadow-inner p-6">
+    <body class="min-h-full p-6 font-sans shadow-inner">
         <slot />
         {
             homepage ? (
                 ""
             ) : (
-                <div class="fixed top-0 left-0 p-3">
+                <div class="fixed left-0 top-0 p-3">
                     <a href="../" transition:name="eli">
                         Eli Gukovsky
                     </a>
@@ -67,7 +67,7 @@ if (!homepage) {
         }
         {
             rules ? (
-                <div class="fixed float-right top-0 right-0 p-3">
+                <div class="fixed right-0 top-0 float-right p-3">
                     <a href={rules} target="_blank">
                         Rules
                     </a>

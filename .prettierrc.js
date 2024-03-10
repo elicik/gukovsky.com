@@ -3,5 +3,5 @@
 export default {
     tabWidth: 4,
     useTabs: false,
-    plugins: ["prettier-plugin-astro"],
+    plugins: ["prettier-plugin-astro", "prettier-plugin-tailwindcss"],
 };
