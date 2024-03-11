@@ -1,68 +1,85 @@
-@import "../global";
+@use "sass:math";
 
-$red: #E74C3C;
-$orange: #E67E22;
-$yellow: #F1C40F;
-$green: #2ECC71;
-$blue: #3498DB;
-$purple: #9B59B6;
+$red: #e74c3c;
+$orange: #e67e22;
+$yellow: #f1c40f;
+$green: #2ecc71;
+$blue: #3498db;
+$purple: #9b59b6;
 
-$right: #F08080;
+$right: #f08080;
 $wrong: #999999;
 
-$color-size: 48;
+$color-size: 48px;
 
 #mastermind {
-	text-align: center;
+    text-align: center;
 }
 .color-selector {
-	margin: 8px 4px;
-	display: inline-block;
-	width: #{$color-size}px;
-	height: #{$color-size}px;
-	.preview {
-		height: #{$color-size}px;
-		width: #{$color-size}px;
-		&:hover {
-			border: 2px solid black;
-		}
-	}
-	.dropdown {
-		display: block;
+    margin: 8px 4px;
+    display: inline-block;
+    width: $color-size;
+    height: $color-size;
+    .preview {
+        height: $color-size;
+        width: $color-size;
+        &:hover {
+            border: 2px solid black;
+        }
+    }
+    .dropdown {
+        display: block;
 
-		div {
-			float: left;
-			height: #{$color-size / 2}px;
-			width: #{$color-size / 3}px;
-			&:hover {
-				border: 2px solid black;
-			}
-		}
-	}
+        div {
+            float: left;
+            height: math.div($color-size, 2);
+            width: math.div($color-size, 3);
+            &:hover {
+                border: 2px solid black;
+            }
+        }
+    }
 }
 div {
-	&[data-color="red"] {background: $red;}
-	&[data-color="orange"] {background: $orange;}
-	&[data-color="yellow"] {background: $yellow;}
-	&[data-color="green"] {background: $green;}
-	&[data-color="blue"] {background: $blue;}
-	&[data-color="purple"] {background: $purple;}
+    &[data-color="red"] {
+        background: $red;
+    }
+    &[data-color="orange"] {
+        background: $orange;
+    }
+    &[data-color="yellow"] {
+        background: $yellow;
+    }
+    &[data-color="green"] {
+        background: $green;
+    }
+    &[data-color="blue"] {
+        background: $blue;
+    }
+    &[data-color="purple"] {
+        background: $purple;
+    }
 }
 
-#guess-mode, #key-mode {
-	display: none;
+#guess-mode,
+#key-mode {
+    display: none;
 }
 
 .square {
-	width: #{$color-size}px;
-	height: #{$color-size}px;
-	display: inline-block;
+    width: $color-size;
+    height: $color-size;
+    display: inline-block;
 }
 .minisquare {
-	float: left;
-	width: #{$color-size / 3}px;
-	height: #{$color-size / 3}px;
-	margin: #{$color-size / 12}px;
-	&.right {background-color: $right;}
-	&.wrong {background-color: $wrong;}
+    float: left;
+    width: math.div($color-size, 3);
+    height: math.div($color-size, 3);
+    margin: math.div($color-size, 12);
+    &.right {
+        background-color: $right;
+    }
+    &.wrong {
+        background-color: $wrong;
+    }
 }

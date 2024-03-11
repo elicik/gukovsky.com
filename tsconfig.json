@@ -1,0 +1,15 @@
+{
+    "extends": "astro/tsconfigs/strictest",
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "jsxImportSource": "react",
+        // From recommendation at https://ui.shadcn.com/docs/installation/astro
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"],
+            "@components/*": ["src/components/*"],
+            "@layouts/*": ["src/layouts/*"]
+        }
+        // end recommendation
+    }
+}

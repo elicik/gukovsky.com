@@ -1,0 +1,56 @@
+---
+import Layout from "@layouts/Layout.astro";
+import { Button } from "@/components/ui/button";
+---
+
+<Layout title="Rubik's Cube" description="A Rubiks Cube made with three.js">
+    <div class="fixed bottom-0 left-0 right-0 flex justify-center">
+        <div id="buttons" class="grid w-80 grid-cols-6">
+            {
+                [
+                    "F",
+                    "B",
+                    "L",
+                    "R",
+                    "U",
+                    "D",
+                    "M",
+                    "S",
+                    "E",
+                    "x",
+                    "y",
+                    "z",
+                ].map((side) => (
+                    <>
+                        <Button
+                            className="m-1"
+                            size="icon"
+                            data-side={side}
+                            client:load
+                            key={side}
+                        >
+                            {side}
+                        </Button>
+                        <Button
+                            className="m-1"
+                            size="icon"
+                            data-side={side}
+                            data-prime
+                            client:load
+                            key={side + "'"}
+                        >
+                            {side + "'"}
+                        </Button>
+                    </>
+                ))
+            }
+        </div>
+    </div>
+    <div id="rubikscube" class="h-full w-full"></div>
+    <style>
+        body {
+            overflow: hidden;
+        }
+    </style>
+    <script src="../RubiksCube/script.js"></script>
+</Layout>

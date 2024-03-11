@@ -1,0 +1,65 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Socials from "@components/Socials.tsx";
+
+let projects = [
+    {
+        title: "Minesweeper",
+        link: "Minesweeper/",
+    },
+    {
+        title: "Rubik's Cube",
+        link: "RubiksCube/",
+    },
+    {
+        title: "Ultimate Tic-Tac-Toe",
+        link: "UltimateTicTacToe/",
+    },
+    {
+        title: "Tetris",
+        link: "Tetris/",
+    },
+    {
+        title: "Pong",
+        link: "Pong/",
+    },
+    {
+        title: "Mastermind",
+        link: "Mastermind/",
+    },
+];
+---
+
+<Layout
+    title="Eli Gukovsky"
+    description="Boston-area software engineer"
+    homepage={true}
+>
+    <div class="flex justify-center">
+        <div>
+            <h1 class="py-4 text-4xl" transition:name="eli">Eli Gukovsky</h1>
+            <h2 class="py-4 text-2xl">Nice to meet you!</h2>
+            <p>
+                I am a Boston-area software engineer, with a particular interest
+                in web technologies.
+            </p>
+            <p>
+                I've made lots of things with my friend <a
+                    href="http://taha.vasowalla.com"
+                    class="text-blue-500 hover:text-red-500">Taha Vasowalla</a
+                >.
+            </p>
+            <h3 class="py-3 text-xl">Projects</h3>
+            {
+                projects.map(({ title, link }) => (
+                    <p>
+                        <a href={link} class="text-blue-500 hover:text-red-500">
+                            {title}
+                        </a>
+                    </p>
+                ))
+            }
+            <Socials client:load={true} />
+        </div>
+    </div>
+</Layout>
