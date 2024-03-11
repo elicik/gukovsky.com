@@ -10,45 +10,39 @@ let keys = {
     paddle2: false,
 };
 window.addEventListener("keydown", function (e) {
-    switch (e.keyCode) {
-        case 87:
+    switch (e.code) {
+        case "KeyW":
             keys.w = true;
-            e.preventDefault();
             break;
-        case 83:
+        case "KeyS":
             keys.s = true;
-            e.preventDefault();
             break;
-        case 38:
+        case "ArrowUp":
             keys.up = true;
-            e.preventDefault();
             break;
-        case 40:
+        case "ArrowDown":
             keys.down = true;
-            e.preventDefault();
             break;
     }
+    e.preventDefault();
 });
 
 window.addEventListener("keyup", function (e) {
-    switch (e.keyCode) {
-        case 87:
+    switch (e.code) {
+        case "KeyW":
             keys.w = false;
-            e.preventDefault();
             break;
-        case 83:
+        case "KeyS":
             keys.s = false;
-            e.preventDefault();
             break;
-        case 38:
+        case "ArrowUp":
             keys.up = false;
-            e.preventDefault();
             break;
-        case 40:
+        case "ArrowDown":
             keys.down = false;
-            e.preventDefault();
             break;
     }
+    e.preventDefault();
 });
 
 // INTERSECTIONS
@@ -276,17 +270,8 @@ function render() {
 
 // RESIZE
 function resize() {
-    width = window.innerWidth;
-    height = window.innerHeight;
-
-    let bodyComputedStyle = window.getComputedStyle(document.body, null);
-    width -= parseInt(bodyComputedStyle.getPropertyValue("padding-left"), 10);
-    width -= parseInt(bodyComputedStyle.getPropertyValue("padding-right"), 10);
-    height -= parseInt(bodyComputedStyle.getPropertyValue("padding-top"), 10);
-    height -= parseInt(
-        bodyComputedStyle.getPropertyValue("padding-bottom"),
-        10,
-    );
+    height = document.querySelector("#pong").offsetHeight;
+    width = document.querySelector("#pong").offsetWidth;
 
     paddle1.height = paddleHeight();
     paddle1.width = paddleWidth();
@@ -311,16 +296,17 @@ waitForBall(2);
 let initialLoad = true;
 document.addEventListener("astro:page-load", async function (event) {
     if (event.target.title === "Pong") {
+        let pongDiv = document.querySelector("#pong");
         if (initialLoad) {
             await app.init({
-                resizeTo: window,
                 backgroundAlpha: 0,
+                resizeTo: pongDiv,
             });
 
             initialLoad = false;
         }
 
-        document.body.insertBefore(app.canvas, document.body.firstChild);
+        pongDiv.insertBefore(app.canvas, pongDiv.firstChild);
         window.addEventListener("resize", resize);
         resize();
         app.ticker.add((time) => render());

@@ -552,30 +552,28 @@ let actions = [];
  */
 
 window.addEventListener("keydown", function (e) {
-    let key = e.which || e.keyCode;
-    if (key === 80) {
-        // P
+    if (e.code === "KeyP") {
         paused = !paused;
     }
     if (!paused) {
-        switch (key) {
-            case 37: // left
+        switch (e.code) {
+            case "ArrowLeft":
                 actions.push(wrapFunction(move, this, ["left"]));
                 break;
-            case 39: // right
+            case "ArrowRight":
                 actions.push(wrapFunction(move, this, ["right"]));
                 break;
-            case 40: // down
+            case "ArrowDown":
                 actions.push(wrapFunction(bottom, this, []));
                 break;
-            case 32: // space
+            case "Space":
                 fastDrop = true;
                 break;
-            case 38: // up
-            case 90: // Z
+            case "ArrowUp":
+            case "KeyZ":
                 actions.push(wrapFunction(rotate, this, ["clockwise"]));
                 break;
-            case 88: // X
+            case "KeyX":
                 actions.push(wrapFunction(rotate, this, ["counterClockwise"]));
                 break;
             default:
@@ -584,9 +582,7 @@ window.addEventListener("keydown", function (e) {
     }
 });
 window.addEventListener("keyup", function (e) {
-    let key = e.which || e.keyCode;
-    if (key === 32) {
-        // space
+    if (e.code === "Space") {
         fastDrop = false;
     }
 });
