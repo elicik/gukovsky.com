@@ -29,7 +29,7 @@ export default function Socials() {
                     variant="outline"
                     key={name}
                 >
-                    <a href={link}>
+                    <a href={link} data-astro-reload>
                         <Icon className="h-full w-full" color="default" />
                     </a>
                 </Button>
