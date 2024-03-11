@@ -340,7 +340,6 @@ document.addEventListener("astro:page-load", function (event) {
                 "",
                 `${location.pathname}?${params}`,
             );
-            // Known bug: Sweetalert popups show up as plain-text at this point
         }
     }
 });

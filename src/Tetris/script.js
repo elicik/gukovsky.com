@@ -701,7 +701,6 @@ async function newGame() {
 
     startingLevel = parseInt(localStorage.getItem("tetris-startingLevel"));
     highscore = parseInt(localStorage.getItem("tetris-highscore"));
-    app.ticker.add((time) => render());
     await newRound();
 }
 
@@ -959,6 +958,7 @@ document.addEventListener("astro:page-load", async function (event) {
             await Assets.init({ manifest: assetsManifest });
             await Assets.loadBundle("blocks");
             await Assets.loadBundle("tetrominos");
+            app.ticker.add((time) => render());
             initialLoad = false;
         }
 

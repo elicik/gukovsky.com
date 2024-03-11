@@ -304,11 +304,11 @@ document.addEventListener("astro:page-load", async function (event) {
             });
 
             initialLoad = false;
+            app.ticker.add((time) => render());
         }
 
         pongDiv.insertBefore(app.canvas, pongDiv.firstChild);
         window.addEventListener("resize", resize);
         resize();
-        app.ticker.add((time) => render());
     }
 });

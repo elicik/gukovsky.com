@@ -1,19 +1,25 @@
 ---
 import Layout from "@layouts/Layout.astro";
+import { Input } from "@components/ui/input";
+import { Label } from "@components/ui/label";
 ---
 
 <Layout title="Tetris" description="Tetris made with pixi.js">
-    <div class="flex justify-center p-6">
-        <label for="startingLevel">Starting Level: </label>
-        <input type="text" id="startingLevel" />
+    <div class="flex justify-center p-3">
+        <div>
+            <div class="max-w-md p-3">
+                <p>
+                    Press Z/Up to rotate clockwise, X to rotate
+                    counterclockwise, Left/Right to shift, Space to drop
+                    quickly, Down to drop all the way, and P to pause
+                </p>
+            </div>
+            <div class="mx-auto max-w-sm p-3">
+                <Label htmlFor="startingLevel">Starting Level: </Label>
+                <Input type="number" id="startingLevel" placeholder="0" />
+            </div>
+        </div>
     </div>
-    <div class="flex justify-center p-6">
-        <p>
-            Controls: Z/Up to rotate clockwise, X to rotate counterclockwise,
-            Left/Right to shift, Space to drop quickly, Down to drop all the
-            way, and P to pause
-        </p>
-    </div>
-    <div id="container" class="flex justify-center p-6"></div>
+    <div id="container" class="flex justify-center p-3"></div>
     <script src="../Tetris/script.js"></script>
 </Layout>
