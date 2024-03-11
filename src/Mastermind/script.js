@@ -1,13 +1,15 @@
 import Swal from "sweetalert2";
+import "sweetalert2/src/sweetalert2.scss";
 
 let key = [];
 let guesses = 0;
 
-function win() {
-    Swal.fire({
+async function win() {
+    await Swal.fire({
         title: "You won! It took " + guesses + " guesses",
         icon: "success",
-    }).then(selectGameType);
+    });
+    await selectGameType();
 }
 
 function setKeyMode() {
@@ -83,7 +85,7 @@ function submitKey(event) {
     setGuessMode();
 }
 
-function submitGuess() {
+async function submitGuess() {
     let guess = [];
     let blocks = document.querySelectorAll(
         "#guess > .color-selector > .preview",
@@ -92,7 +94,7 @@ function submitGuess() {
         if (blocks[i].dataset.color) {
             guess[i] = blocks[i].dataset.color;
         } else {
-            Swal.fire(
+            await Swal.fire(
                 "Error",
                 "Make sure every color in your guess is set",
                 "error",
@@ -128,7 +130,7 @@ function submitGuess() {
         .insertBefore(div, document.querySelector("#history").firstChild);
 
     if (result.right === 4) {
-        win();
+        await win();
     }
 }
 
@@ -150,32 +152,33 @@ function colorSelectorOptionClick(event) {
     dropdown.style.display = "none";
 }
 
-function selectGameType() {
-    Swal.fire({
+async function selectGameType() {
+    let swalResult = await Swal.fire({
         title: "Choose a game type",
         text: "You can either play against a computer, or against a friend",
         confirmButtonText: "Play against a person",
         cancelButtonText: "Play against a computer",
         showConfirmButton: true,
         showCancelButton: true,
-    }).then(function (swalResult) {
-        if (swalResult.isConfirmed) {
-            Swal.fire({
-                title: "Get ready!",
-                text: "Don't let the other person look before you've submitted your key!",
-            }).then(setKeyMode);
-        } else {
-            // Computer opponent
-            let colors = ["red", "orange", "yellow", "green", "blue", "purple"];
-            for (let i = 0; i < 4; i++) {
-                key[i] = colors[Math.floor(Math.random() * colors.length)];
-            }
-            setGuessMode();
-        }
     });
+
+    if (swalResult.isConfirmed) {
+        await Swal.fire({
+            title: "Get ready!",
+            text: "Don't let the other person look before you've submitted your key!",
+        });
+        setKeyMode();
+    } else {
+        // Computer opponent
+        let colors = ["red", "orange", "yellow", "green", "blue", "purple"];
+        for (let i = 0; i < 4; i++) {
+            key[i] = colors[Math.floor(Math.random() * colors.length)];
+        }
+        setGuessMode();
+    }
 }
 
-document.addEventListener("astro:page-load", function (event) {
+document.addEventListener("astro:page-load", async function (event) {
     if (event.target.title === "Mastermind") {
         for (let colorSelectorPreview of document.querySelectorAll(
             ".color-selector > .preview",
@@ -199,6 +202,7 @@ document.addEventListener("astro:page-load", function (event) {
         document
             .querySelector('button[name="submitGuess"]')
             .addEventListener("click", submitGuess);
-        selectGameType();
+
+        await selectGameType();
     }
 });
