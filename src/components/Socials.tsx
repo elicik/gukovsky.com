@@ -30,7 +30,13 @@ export default function Socials() {
                     key={name}
                 >
                     <a href={link} data-astro-reload>
-                        <Icon className="h-full w-full" color="default" />
+                        <Icon
+                            className="h-full w-full"
+                            color="default"
+                            key={name}
+                            onPointerEnterCapture={undefined}
+                            onPointerLeaveCapture={undefined}
+                        />
                     </a>
                 </Button>
             ))}
